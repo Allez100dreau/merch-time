@@ -1,18 +1,18 @@
 package unice.solver;
 
-import unice.Instance;
-import unice.Solution;
-import unice.SolutionMT;
+import unice.instance.Instance;
+import unice.solution.ISolution;
+import unice.solution.SolutionMT;
 
 import java.util.*;
 
-public class SolverH implements Solver {
-    public Solution solve(Instance I) {
+public class SolverH implements ISolver {
+    public ISolution solve(Instance I) {
         ArrayList<Integer> items = new ArrayList<>();
-        for (int i = 0; i < I.getN(); i++) items.add(I.getWeight(i));
+        for (int i = 0; i < I.getNumberOfProducts(); i++) items.add(I.getWeights(i));
 
-        boolean[] chosenItems = new boolean[I.getN()];
-        for (int i = 0; i < I.getN(); i++) chosenItems[i] = false;
+        List<Boolean> chosenItems = new ArrayList<>();
+        for (int i = 0; i < I.getNumberOfProducts(); i++) chosenItems.add(false);
 
         int wCopy = I.getCapacity();
         int chosenItem = 0;
@@ -25,7 +25,7 @@ public class SolverH implements Solver {
                 // Put it in the backpack
                 items.remove(0);
 
-                chosenItems[i] = true; //add the chosen item to the list of chosen items
+                chosenItems.set(i, true); //add the chosen item to the list of chosen items
                 wCopy -= chosenItem;
             } else {
                 // Else, don't use it
@@ -37,8 +37,8 @@ public class SolverH implements Solver {
     }
 
     @Override
-    public Iterator<Solution> getIterator(Instance instance) {
-        ArrayList<Solution> solutions = new ArrayList<>();
+    public Iterator<ISolution> getIterator(Instance instance) {
+        ArrayList<ISolution> solutions = new ArrayList<>();
 
         solutions.add(solve(instance));
 
@@ -46,7 +46,7 @@ public class SolverH implements Solver {
     }
 
     @Override
-    public boolean isFeasible(Instance instance, Solution solution) {
+    public boolean isFeasible(Instance instance, ISolution solution) {
         return false;
     }
 }

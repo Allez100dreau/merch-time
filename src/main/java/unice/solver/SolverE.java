@@ -1,8 +1,15 @@
-package unice.solutionE;
+package unice.solver;
+
+import unice.solution.ISolution;
+import unice.solution.SolutionMT;
+import unice.instance.Instance;
+import unice.logger.LoggerMT;
 
 import java.util.*;
 
-public class SolverE implements  ISolverSSP{
+public class SolverE implements  ISolver{
+
+
 
 
     /**
@@ -11,11 +18,14 @@ public class SolverE implements  ISolverSSP{
      * @param combination une nouvelle combinaison qui peut êtres une futur solution
      * @param capacity le budget
      * @return
-     * true :  si la combinaison est une nouvelle solution
-     * false : sinon
+     * 0 :  si la combinaison est une nouvelle solution
+     * 1 : si mauvaise combinaison car depasse le budget
+     * 2 : sinon si capacity > 0  ou que la solution existe deja on continue
+     *
      */
 
     private static int solver(List<List<Integer>> solutions, List<Integer> combination, int capacity) {
+
         for(int i = 0 ; i<combination.size() ; i++){
             capacity -= combination.get(i);
         }
@@ -44,22 +54,25 @@ public class SolverE implements  ISolverSSP{
         if(weight.size() == 0) {
             return solutions;
         }
-        int W = solver(solutions,weight,capacity);
-        if(W == 0){
-            //LoggerMT.show(weight);
+        int solve = solver(solutions,weight,capacity);
+        //si reste des prix est une solution on l'ajoute
+        if(solve == 0){
             solutions.add(weight);
             return solutions;
         }
         List<Integer> nouvelleCombinaison = new ArrayList<>(primerSolution);
+
         nouvelleCombinaison.add(weight.get(0));
         weight.remove(0);
         List<Integer> instanceSecondaire = new ArrayList<>(weight);
         //LoggerMT.show(nouvelleCombinaison);
-        W = solver(solutions,nouvelleCombinaison,capacity);
-        if(W == 0){
+
+
+        solve = solver(solutions,nouvelleCombinaison,capacity);
+        if(solve == 0){
             solutions.add(nouvelleCombinaison);
         }
-        else if(W == 2) {
+        else if(solve == 2) {
             if (instanceSecondaire.size() > 0) {
                 for (int i = 0; i < instanceSecondaire.size(); i++) {
                     List<Integer> combinaisonSecondaire = new ArrayList<>(nouvelleCombinaison);
@@ -67,21 +80,21 @@ public class SolverE implements  ISolverSSP{
                     instanceSecondaire.remove(i);
                     i--;
                     //LoggerMT.show(combinaisonSecondaire);
-                    W = solver(solutions, combinaisonSecondaire, capacity);
-                    if (W == 0) {
+
+                    solve = solver(solutions, combinaisonSecondaire, capacity);
+                    if (solve == 0) {
                         solutions.add(combinaisonSecondaire);
                         continue;
-                    }else if (W == 1){
+                    }else if (solve == 1){
                         continue;
                     }
 
-                    solutions = getSolution(solutions, combinaisonSecondaire, instanceSecondaire, capacity);
+                    getSolution(solutions, combinaisonSecondaire, instanceSecondaire, capacity);
                 }
             }
         }
-
-        int wMAJUSCULE = solver(solutions,weight,capacity);
-        if(wMAJUSCULE == 2){
+        int newSolve = solver(solutions,weight,capacity);
+        if(newSolve == 2){
             return solutions;
         }
         return getSolution(solutions,primerSolution,weight,capacity);
@@ -92,21 +105,25 @@ public class SolverE implements  ISolverSSP{
      * @param instance les données saisis
      * @return une itération sur les produit prix pour une solution retrouver
      */
-    public Iterator<ISolutionSSP> getIterator(Instance instance){
-        ArrayList<ISolutionSSP> solve = new ArrayList<>();
+    @Override
+    public Iterator<ISolution> getIterator(Instance instance) {
+        ArrayList<ISolution> solve = new ArrayList<>();
         List<List<Integer>> solutions = new ArrayList<>();
-        List<Integer> weight = new ArrayList<>(instance.getWeight());
+        List<Integer> weight = new ArrayList<>(instance.getWeights());
         Collections.sort(weight);
         Collections.reverse(weight);
 
         getSolution(solutions, new ArrayList<Integer>(), weight ,instance.getCapacity());
-        //LoggerMT.show(solutions);
+
+        LoggerMT.show("Les solutions possible :" + solutions);
+
         for (List<Integer> solution : solutions) {
             List<Boolean> takes = new ArrayList<>();
+
             for (int e = 0; e < instance.getNumberOfProducts(); e++) {
                 boolean isTaken = false;
                 for (int k = solution.size() - 1; k >= 0; k--) {
-                    if (instance.getWeight(e) == solution.get(k)) {
+                    if (instance.getWeights(e) == solution.get(k)) {
                         isTaken = true;
                         solution.remove(k);
                         break;
@@ -114,8 +131,8 @@ public class SolverE implements  ISolverSSP{
                 }
                 takes.add(isTaken);
             }
-            ISolutionSSP solutionSSP = new ISolutionSSP(takes);
-            solve.add(solutionSSP);
+            ISolution solutionS = new SolutionMT(takes);
+            solve.add(solutionS);
         }
         return solve.iterator();
     }
@@ -144,15 +161,18 @@ public class SolverE implements  ISolverSSP{
      * @param solution la solution qu'on a choisi (produits pris)
      * @return l'existence d'une autre solution avec le produit restant
      */
-    public boolean isFeasible(Instance instance, ISolutionSSP solution){
+    @Override
+    public boolean isFeasible(Instance instance, ISolution solution) {
         List<Integer> rest = new ArrayList<>();
         //On ajoute tous les produits non pris dans la solution au "reste"
         for(int i = 0; i < instance.getNumberOfProducts() ; i++){
-            if(!solution.getTake().get(i)){
-                rest.add(instance.getWeight(i));
+            if(!solution.take(i)){
+                rest.add(instance.getWeights(i));
             }
         }
         return knapsackRec(rest, rest.size(), instance.getCapacity()) == instance.getCapacity();
     }
+
+
 
 }
