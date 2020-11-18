@@ -9,7 +9,7 @@ import java.util.List;
  * @capacity : représente le budget d'un joueur
  * @numberOfProducts :  représente le nombre des produits disponibles
  * @weight : représente le prix de chaque produit
- * @frequencies : répresente la fréquence des objets disponible
+ * @frequencies : represente la fréquence des objets disponible
  */
 public class Instance implements IInstanceMT {
 
