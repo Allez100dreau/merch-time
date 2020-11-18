@@ -8,7 +8,7 @@ public class SolverE implements  ISolverSSP{
     /**
      *
      * @param solutions liste des solutions possibles
-     * @param combination une nouvelle combinaison qui peut etres une futur solution
+     * @param combination une nouvelle combinaison qui peut êtres une futur solution
      * @param capacity le budget
      * @return
      * true :  si la combinaison est une nouvelle solution
@@ -33,7 +33,7 @@ public class SolverE implements  ISolverSSP{
      * Méthode recursive :
      * tant qu'il reste des produit non acheter on boucle pour chercher une solution
      *
-     * @param solutions liste de combinaision de prix (de somme = à la capacité) qui forme une solution
+     * @param solutions liste de combinaison de prix (de somme = à la capacité) qui forme une solution
      * @param primerSolution
      * @param weight les prix des produit qui ne font pas partie de la solution encore
      * @param capacity le budget
@@ -44,11 +44,18 @@ public class SolverE implements  ISolverSSP{
         if(weight.size() == 0) {
             return solutions;
         }
+        int W = solver(solutions,weight,capacity);
+        if(W == 0){
+            //LoggerMT.show(weight);
+            solutions.add(weight);
+            return solutions;
+        }
         List<Integer> nouvelleCombinaison = new ArrayList<>(primerSolution);
         nouvelleCombinaison.add(weight.get(0));
         weight.remove(0);
         List<Integer> instanceSecondaire = new ArrayList<>(weight);
-        int W = solver(solutions,nouvelleCombinaison,capacity);
+        //LoggerMT.show(nouvelleCombinaison);
+        W = solver(solutions,nouvelleCombinaison,capacity);
         if(W == 0){
             solutions.add(nouvelleCombinaison);
         }
@@ -59,6 +66,7 @@ public class SolverE implements  ISolverSSP{
                     combinaisonSecondaire.add(instanceSecondaire.get(i));
                     instanceSecondaire.remove(i);
                     i--;
+                    //LoggerMT.show(combinaisonSecondaire);
                     W = solver(solutions, combinaisonSecondaire, capacity);
                     if (W == 0) {
                         solutions.add(combinaisonSecondaire);
@@ -66,9 +74,15 @@ public class SolverE implements  ISolverSSP{
                     }else if (W == 1){
                         continue;
                     }
+
                     solutions = getSolution(solutions, combinaisonSecondaire, instanceSecondaire, capacity);
                 }
             }
+        }
+
+        int wMAJUSCULE = solver(solutions,weight,capacity);
+        if(wMAJUSCULE == 2){
+            return solutions;
         }
         return getSolution(solutions,primerSolution,weight,capacity);
     }
@@ -86,7 +100,7 @@ public class SolverE implements  ISolverSSP{
         Collections.reverse(weight);
 
         getSolution(solutions, new ArrayList<Integer>(), weight ,instance.getCapacity());
-
+        //LoggerMT.show(solutions);
         for (List<Integer> solution : solutions) {
             List<Boolean> takes = new ArrayList<>();
             for (int e = 0; e < instance.getNumberOfProducts(); e++) {

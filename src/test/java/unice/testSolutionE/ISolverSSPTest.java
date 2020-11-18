@@ -29,7 +29,7 @@ public class ISolverSSPTest {
         Collections.sort(weight);
         int capacity = 10;
 
-        List<List<Integer>> newSolution = solverSSP.getSolution(new ArrayList<>(),new ArrayList<Integer>(),weight,capacity);
+        List<List<Integer>> newSolution = solverSSP.getSolution(new ArrayList<List<Integer>>(),new ArrayList<Integer>(),weight,capacity);
         assertTrue(newSolution.contains(sol1));
 
 
@@ -42,7 +42,7 @@ public class ISolverSSPTest {
         Collections.sort(weight2);
         capacity = 21;
 
-        newSolution = solverSSP.getSolution(new ArrayList<>(),new ArrayList<Integer>(),weight2,capacity);
+        newSolution = solverSSP.getSolution(new ArrayList<List<Integer>>(),new ArrayList<Integer>(),weight2,capacity);
         assertEquals( 1,newSolution.size()); //erreur car logiquement 2
 
 
@@ -55,7 +55,7 @@ public class ISolverSSPTest {
         Collections.sort(weight3);
         capacity = 20;
 
-        newSolution = solverSSP.getSolution(new ArrayList<>(),new ArrayList<Integer>(),weight3,capacity);
+        newSolution = solverSSP.getSolution(new ArrayList<List<Integer>>(),new ArrayList<Integer>(),weight3,capacity);
         assertEquals( 0,newSolution.size()); //erreur car logiquement 1
 
 
@@ -90,7 +90,7 @@ public class ISolverSSPTest {
         Boolean[] s2 = {true,true,false,false};
         List<Boolean> sol2 = Arrays.asList(s2);
         assertEquals(solverSSP.getIterator(instanceMT).next().getTake(),sol2);
-        //probleme de getSolution corrriger dans getIterator avec la boucle
+        //problème de getSolution corriger dans getIterator avec la boucle
 
 
 
