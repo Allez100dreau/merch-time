@@ -17,4 +17,9 @@ public class SolutionMT implements Solution {
     public boolean take(int i) {
         return this.chosenItems[i];
     }
+
+    @Override
+    public boolean[] getChosenItems() {
+        return chosenItems;
+    }
 }

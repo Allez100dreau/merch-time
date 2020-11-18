@@ -22,9 +22,12 @@ public class MetaMerch {
         final Solver solver = makeSolver();
 
         String answer = "IMPOSSIBLE";
-        final Iterator<Solution> m = solver.getIterator(instance);
-        while (m.hasNext()) {
-            if (!solver.isFeasible(instance, m.next())) {
+        final Iterator<Solution> iterator = solver.getIterator(instance);
+        ISolutionChecker solutionChecker = new SolutionChecker();
+        solutionChecker.checkValidity(instance, iterator);
+
+        while (iterator.hasNext()) {
+            if (!solver.isFeasible(instance, iterator.next())) {
                 answer = "POSSIBLE";
                 break;
             }
