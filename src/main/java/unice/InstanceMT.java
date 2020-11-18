@@ -1,5 +1,7 @@
 package unice;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Scanner;
 
 public class InstanceMT implements Instance {
@@ -17,6 +19,7 @@ public class InstanceMT implements Instance {
             I[i] = scanner.nextInt();
         }
 
+        Collections.sort(Arrays.asList(I.clone()), Collections.<int[]>reverseOrder());
         weights = I;
     }
 
