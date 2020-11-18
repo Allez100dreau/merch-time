@@ -1,11 +1,10 @@
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import unice.instance.InstanceMT;
 import unice.solver.SolverH;
 
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 
 public class SolverHTest {
     InstanceMT instanceMT ;
@@ -15,7 +14,7 @@ public class SolverHTest {
 
     SolverH solverH ;
 
-    @BeforeEach
+
     void setUp(){
         capacity = 20 ;
         numberOfProducts = 4;
@@ -26,7 +25,8 @@ public class SolverHTest {
     }
 
     @Test
-    void solve(){
+    public void solve(){
+        setUp();
         List<Boolean> expectedResult = new ArrayList<>(Arrays.asList(true,true,false,false));
 
         List<Boolean> actualResult = solverH.solve(instanceMT).getChosenItems() ;

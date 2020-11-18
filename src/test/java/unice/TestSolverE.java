@@ -1,4 +1,4 @@
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import unice.instance.Instance;
 import unice.instance.InstanceMT;
 import unice.solution.ISolution;
@@ -7,7 +7,7 @@ import unice.solver.SolverE;
 
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 
 public class TestSolverE {
 
