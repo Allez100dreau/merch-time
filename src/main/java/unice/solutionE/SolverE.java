@@ -14,13 +14,19 @@ public class SolverE implements  ISolverSSP{
      * true :  si la combinaison est une nouvelle solution
      * false : sinon
      */
-    private static boolean solver(List<List<Integer>> solutions, List<Integer> combination, int capacity) {
-        for(Integer integer : combination)
-        {
-            capacity -= integer;
+
+    private static int solver(List<List<Integer>> solutions, List<Integer> combination, int capacity) {
+        for(int i = 0 ; i<combination.size() ; i++){
+            capacity -= combination.get(i);
+        }
+        if(capacity < 0){
+            return 1;
+        }
+        if(capacity == 0 && !solutions.contains(combination)){
+            return 0;
         }
 
-        return capacity == 0 && !solutions.contains(combination);
+        return 2;
     }
 
     /**
@@ -33,32 +39,35 @@ public class SolverE implements  ISolverSSP{
      * @param capacity le budget
      * @return la liste des solutions possible
      */
+
     public List<List<Integer>> getSolution(List<List<Integer>> solutions, List<Integer> primerSolution , List<Integer> weight, int capacity) {
         if(weight.size() == 0) {
             return solutions;
         }
-        List<Integer> newCombination = new ArrayList<>(primerSolution);
-        newCombination.add(weight.get(0));
-
+        List<Integer> nouvelleCombinaison = new ArrayList<>(primerSolution);
+        nouvelleCombinaison.add(weight.get(0));
         weight.remove(0);
-        List<Integer> secondaryInstance = new ArrayList<>(weight);
-
-        // si la nouvelle combinaison de prix est une nouvelle solution on l'ajoute
-        if(solver(solutions,newCombination,capacity)){
-            solutions.add(newCombination);
+        List<Integer> instanceSecondaire = new ArrayList<>(weight);
+        int W = solver(solutions,nouvelleCombinaison,capacity);
+        if(W == 0){
+            solutions.add(nouvelleCombinaison);
         }
-        //sinon s'il reste des produits non ajouter
-        else if (secondaryInstance.size()>0){
-            for (int i = 0 ; i < secondaryInstance.size(); i++) {
-                List<Integer> secondaryCombination = new ArrayList<>(newCombination);
-                secondaryCombination.add(secondaryInstance.get(i));
-                secondaryInstance.remove(i);
-                i--;
-                if(solver(solutions,secondaryCombination,capacity)){
-                    solutions.add(secondaryCombination);
-                    continue;
+        else if(W == 2) {
+            if (instanceSecondaire.size() > 0) {
+                for (int i = 0; i < instanceSecondaire.size(); i++) {
+                    List<Integer> combinaisonSecondaire = new ArrayList<>(nouvelleCombinaison);
+                    combinaisonSecondaire.add(instanceSecondaire.get(i));
+                    instanceSecondaire.remove(i);
+                    i--;
+                    W = solver(solutions, combinaisonSecondaire, capacity);
+                    if (W == 0) {
+                        solutions.add(combinaisonSecondaire);
+                        continue;
+                    }else if (W == 1){
+                        continue;
+                    }
+                    solutions = getSolution(solutions, combinaisonSecondaire, instanceSecondaire, capacity);
                 }
-                solutions = getSolution(solutions, secondaryCombination,secondaryInstance,capacity);
             }
         }
         return getSolution(solutions,primerSolution,weight,capacity);
@@ -72,18 +81,11 @@ public class SolverE implements  ISolverSSP{
     public Iterator<ISolutionSSP> getIterator(Instance instance){
         ArrayList<ISolutionSSP> solve = new ArrayList<>();
         List<List<Integer>> solutions = new ArrayList<>();
-        List<Integer> weight ;
-        weight = new ArrayList<>(instance.getWeight());
+        List<Integer> weight = new ArrayList<>(instance.getWeight());
         Collections.sort(weight);
         Collections.reverse(weight);
 
-        for (Integer i : instance.getWeight() ) {
-            weight.add(i);
-            weight.remove(i);
-            getSolution(solutions, new ArrayList<Integer>(), weight ,instance.getCapacity());
-            weight = new ArrayList<>(instance.getWeight());
-
-        }
+        getSolution(solutions, new ArrayList<Integer>(), weight ,instance.getCapacity());
 
         for (List<Integer> solution : solutions) {
             List<Boolean> takes = new ArrayList<>();
@@ -138,6 +140,5 @@ public class SolverE implements  ISolverSSP{
         }
         return knapsackRec(rest, rest.size(), instance.getCapacity()) == instance.getCapacity();
     }
-
 
 }

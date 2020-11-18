@@ -6,7 +6,7 @@ public class MTSolver {
 
     /**
      * Cette methode permet de Input les données
-     * @return  un objet IIstanceMT qui contient toute les données .
+     * @return  un objet IInstanceMT qui contient toute les données .
      */
     private static Instance parseInstance() {
         Scanner sc = new Scanner(System.in);
@@ -34,7 +34,7 @@ public class MTSolver {
         String answer = "IMPOSSIBLE";
         final Iterator<ISolutionSSP> you = solver.getIterator(instance);
 
-        // pour chaque solution on verifie s'il est possible de construire
+        // pour chaque solution on vérifie s'il est possible de construire
         // une autre combinaison de prix avec le reste des prix
         while(you.hasNext()) {
             if(! solver.isFeasible(instance, you.next())) {
