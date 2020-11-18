@@ -1,5 +1,8 @@
 package unice;
 
+import unice.solver.Solver;
+import unice.solver.SolverZ;
+
 import java.util.Iterator;
 
 public class MetaMerch {

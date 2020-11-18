@@ -1,8 +1,11 @@
-package unice;
+package unice.solver;
+
+import unice.Instance;
+import unice.Solution;
 
 import java.util.*;
 
-public class MethodH implements Method {
+public class SolverH implements Solver {
     @Override
     public int[][] solve(int[] I, int W) {
         try {
@@ -46,4 +49,13 @@ public class MethodH implements Method {
 
     }
 
+    @Override
+    public Iterator<Solution> getIterator(Instance instance) {
+        return null;
+    }
+
+    @Override
+    public boolean isFeasible(Instance instance, Solution solution) {
+        return false;
+    }
 }

@@ -1,4 +1,7 @@
-package unice;
+package unice.solver;
+
+import unice.Instance;
+import unice.Solution;
 
 import java.util.Iterator;
 
