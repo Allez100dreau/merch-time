@@ -26,6 +26,8 @@ public class MTSolver {
 
     public static void main(String[] args) {
 
+        LoggerMT.init(true);
+
         final Instance instance = parseInstance();
         final SolverE solver = makeSolver();
 
@@ -40,6 +42,6 @@ public class MTSolver {
                 break;
             }
         }
-        System.out.println(answer);
+        LoggerMT.show(answer);
     }
 }
