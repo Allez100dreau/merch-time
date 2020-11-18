@@ -6,47 +6,39 @@ import unice.Solution;
 import java.util.*;
 
 public class SolverH implements Solver {
-    @Override
     public int[][] solve(int[] I, int W) {
-        try {
-            ArrayList<Integer> items_copy = new ArrayList<>();
-            for (int n : I) items_copy.add(n);
+        ArrayList<Integer> itemsCopy = new ArrayList<>();
+        for (int n : I) itemsCopy.add(n);
 
-            Collections.sort(items_copy, Collections.reverseOrder()); // We sort the array from biggest to smallest
-            int chosen_item = items_copy.get(0); // We choose the heaviest item
+        Collections.sort(itemsCopy, Collections.reverseOrder()); // We sort the array from biggest to smallest
+        int chosenItem = 0;
 
-            if (W == 0) { // If there's no space left in the backpack
-                // Then return nothing
-                return new int[0][0];
-            } else if (chosen_item <= W) { // If the item fits the backpack
+        ArrayList<Integer> chosenItems = new ArrayList<>();
+        int wCopy = W;
+        for (int i = 0, stop = itemsCopy.size(); i < stop; i++) {
+            chosenItem = itemsCopy.get(0); // We choose the heaviest item
+            if (wCopy == 0) { // if the knapsack is full we stop
+                break;
+            } else if (chosenItem <= wCopy) { // If the item fits the backpack
                 // Put it in the backpack
-                items_copy.remove(0);
+                itemsCopy.remove(0);
 
-                int[] items_array = new int[items_copy.size()];
-                for (int i = 0; i < items_copy.size(); i++) items_array[i] = items_copy.get(i);
-
-                int[][] res = solve(items_array, W - chosen_item);
-
-                int[] res0 = new int[res[0].length+1];
-                res0[0] = chosen_item;
-                for (int i = 1; i <= res[0].length; i++) res0[i] = res[0][i];
-                res[0] = res0;
-
-                return res;
+                chosenItems.add(chosenItem); //add the chosen item to the list of chosen items
+                wCopy -= chosenItem;
             } else {
                 // Else, don't use it
-                items_copy.remove(0);
-
-                int[] items_array = new int[items_copy.size()];
-                for (int i = 0; i < items_copy.size(); i++) items_array[i] = items_copy.get(i);
-
-                return solve(items_array, W);
+                itemsCopy.remove(0);
             }
-        } catch (NoSuchElementException e) { // If there are no more items to add
-            // Then return nothing
-            return new int[0][0];
         }
+        //Converting chosenItems arraylist to an array
+        int[] res0 = new int[chosenItems.size()] ;
+        for (int i = 0; i < chosenItems.size(); i++) {
+            res0[i] = chosenItems.get(i) ;
+        }
+        int[][] res = new int[1][res0.length] ;
+        res[0] = res0 ;
 
+        return res ;
     }
 
     @Override
