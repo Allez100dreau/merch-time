@@ -17,8 +17,6 @@ public class SolverH implements Solver {
         int wCopy = I.getCapacity();
         int chosenItem = 0;
 
-        Collections.sort(items, Collections.reverseOrder()); // We sort the array from biggest to smallest
-
         for (int i = 0, stop = items.size(); i < stop; i++) {
             chosenItem = items.get(0); // We choose the heaviest item
             if (wCopy == 0) { // if the knapsack is full we stop
