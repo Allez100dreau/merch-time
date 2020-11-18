@@ -6,4 +6,6 @@ public interface Solution {
 
     boolean take(int i);
 
+    boolean[] getChosenItems();
+
 }
