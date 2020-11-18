@@ -1,5 +1,4 @@
-package unice.testSolutionE;
-
+package testSolutionE;
 
 import org.junit.Test;
 import unice.solutionE.Instance;

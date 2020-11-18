@@ -28,12 +28,8 @@
   </dependencies>
 
   <build>
-    <sourceDirectory>
-      src/main/java
-    </sourceDirectory>
-    <testSourceDirectory>
-      src/test/java
-    </testSourceDirectory>
+    <sourceDirectory>src/main/java</sourceDirectory>
+    <testSourceDirectory>src/test/java/unice</testSourceDirectory>
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
       <plugins>
         <plugin>
