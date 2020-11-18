@@ -2,48 +2,49 @@ package unice.solver;
 
 import unice.Instance;
 import unice.Solution;
+import unice.SolutionMT;
 
 import java.util.*;
 
 public class SolverH implements Solver {
-    public int[][] solve(int[] I, int W) {
-        ArrayList<Integer> itemsCopy = new ArrayList<>();
-        for (int n : I) itemsCopy.add(n);
+    public Solution solve(Instance I) {
+        ArrayList<Integer> items = new ArrayList<>();
+        for (int i = 0; i < I.getN(); i++) items.add(I.getWeight(i));
 
-        Collections.sort(itemsCopy, Collections.reverseOrder()); // We sort the array from biggest to smallest
+        boolean[] chosenItems = new boolean[I.getN()];
+        for (int i = 0; i < I.getN(); i++) chosenItems[i] = false;
+
+        int wCopy = I.getCapacity();
         int chosenItem = 0;
 
-        ArrayList<Integer> chosenItems = new ArrayList<>();
-        int wCopy = W;
-        for (int i = 0, stop = itemsCopy.size(); i < stop; i++) {
-            chosenItem = itemsCopy.get(0); // We choose the heaviest item
+        Collections.sort(items, Collections.reverseOrder()); // We sort the array from biggest to smallest
+
+        for (int i = 0, stop = items.size(); i < stop; i++) {
+            chosenItem = items.get(0); // We choose the heaviest item
             if (wCopy == 0) { // if the knapsack is full we stop
                 break;
             } else if (chosenItem <= wCopy) { // If the item fits the backpack
                 // Put it in the backpack
-                itemsCopy.remove(0);
+                items.remove(0);
 
-                chosenItems.add(chosenItem); //add the chosen item to the list of chosen items
+                chosenItems[i] = true; //add the chosen item to the list of chosen items
                 wCopy -= chosenItem;
             } else {
                 // Else, don't use it
-                itemsCopy.remove(0);
+                items.remove(0);
             }
         }
-        //Converting chosenItems arraylist to an array
-        int[] res0 = new int[chosenItems.size()] ;
-        for (int i = 0; i < chosenItems.size(); i++) {
-            res0[i] = chosenItems.get(i) ;
-        }
-        int[][] res = new int[1][res0.length] ;
-        res[0] = res0 ;
 
-        return res ;
+        return new SolutionMT(chosenItems);
     }
 
     @Override
     public Iterator<Solution> getIterator(Instance instance) {
-        return null;
+        ArrayList<Solution> solutions = new ArrayList<>();
+
+        solutions.add(solve(instance));
+
+        return solutions.iterator();
     }
 
     @Override
