@@ -6,6 +6,4 @@ public interface Solution {
 
     boolean take(int i);
 
-    int[] getPrices();
-
 }
