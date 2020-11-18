@@ -1,35 +1,31 @@
 package unice;
 
-import java.util.Scanner;
+import java.util.Iterator;
 
 public class MetaMerch {
 
-    private static int[] subtractSet(int[] i, int[] j) {
-        return i;
+    private static Instance parseInstance() {
+        return new InstanceMT();
     }
 
+    private static Solver makeSolver() {
+        return new SolverZ();
+    }
+
+    private MetaMerch() {}
+
     public static void main(String[] args) {
-        final Scanner scanner = new Scanner(System.in);
+        final Instance instance = parseInstance();
+        final Solver solver = makeSolver();
 
-        int W = scanner.nextInt();
-        int n = scanner.nextInt();
-        int[] I = new int[n];
-
-        for (int i = 0; i < n; i++) {
-            I[i] = scanner.nextInt();
-        }
-
-        Method method = new MethodZ();
-        int[][] S = method.solve(I, W);
-
-        for (int[] J : S) {
-            int[] K = subtractSet(I,J);
-            int[][] T = method.solve(K, W);
-            if (T.length == 0) {
-                System.out.println("OUI");
-                System.exit(0);
+        String answer = "IMPOSSIBLE";
+        final Iterator<Solution> m = solver.getIterator(instance);
+        while (m.hasNext()) {
+            if (!solver.isFeasible(instance, m.next())) {
+                answer = "POSSIBLE";
+                break;
             }
         }
-        System.out.println("NON");
+        System.out.println(answer);
     }
 }
