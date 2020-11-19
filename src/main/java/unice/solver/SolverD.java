@@ -142,6 +142,32 @@ public class SolverD implements ISolver {
 
     @Override
     public boolean isFeasible(Instance instance, ISolution solution) {
-        return false;
+        List<Integer> rest = new ArrayList<>();
+        //On ajoute tous les produits non pris dans la solution au "reste"
+        for(int i = 0; i < instance.getNumberOfProducts() ; i++){
+            if(!solution.take(i)){
+                rest.add(instance.getWeights(i));
+            }
+        }
+        return knapsackRec(rest, rest.size(), instance.getCapacity()) == instance.getCapacity();
+    }
+
+
+    /**
+     * Methode recursive
+     * @param weights liste des restes des prix qui va subir la récursivité
+     * @param nbRemainingProduct nombre de produit restant
+     * @param capacity budget
+     * @return retourne la somme la plus proche du budget que peut former le reste des prix
+     */
+    public int knapsackRec(List<Integer> weights, int nbRemainingProduct, int capacity) {
+        if (nbRemainingProduct <= 0) {
+            return 0;
+        } else if (weights.get(nbRemainingProduct - 1) > capacity) {
+            return knapsackRec(weights, nbRemainingProduct - 1, capacity);
+        } else {
+            return Math.max(knapsackRec(weights, nbRemainingProduct - 1, capacity),
+                    weights.get(nbRemainingProduct - 1) + knapsackRec(weights,  nbRemainingProduct - 1, capacity - weights.get(nbRemainingProduct - 1)));
+        }
     }
 }
