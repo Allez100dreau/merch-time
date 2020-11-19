@@ -1,39 +1,53 @@
 package unice.solver;
 
-import java.util.Scanner;
+import unice.instance.Instance;
+import unice.logger.LoggerMT;
+import unice.solution.ISolution;
+import unice.solution.SolutionMT;
 
-public class SolverD {
-    public static void main(String[] args) {
-        Scanner input = new Scanner(System.in);
-        int sackMax = input.nextInt();
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
-        int[] weights = new int[input.nextInt()];
-        for (int i = 0; i < weights.length; i++) {
-            weights[i] = input.nextInt();
-        }
-        //Total capacity of the knapsack sackMax
-        //list of all weights weights[]
-        fillSack(sackMax, weights);
-    }
+public class SolverD implements ISolver {
 
-    //return max to be put in sack
-    public static void fillSack(int sackMax, int[] weights) {
-        int numberOfItems = weights.length;
+    /**
+     * Méthode recursive :
+     * tant qu'il reste des produit non acheter on boucle pour chercher une solution
+     *
+     * @param solutions liste de combinaison de prix (de somme = à la capacité) qui forme une solution
+     * @param weight    les prix des produit qui ne font pas partie de la solution encore
+     * @param capacity  le budget
+     * @return la liste des solutions possible
+     */
+
+    public List<List<Integer>> getSolution(List<List<Integer>> solutions, List<Integer> weight, int capacity) {
+        int oldCapacity = capacity;
+        int numberOfItems = weight.size();
+
         int item, itemWeight;
-        int[][] matrix = new int[numberOfItems + 1][sackMax + 1];
+
+        /**
+         * la matrix de tout les choix
+         *
+         **/
+        int[][] matrix = new int[numberOfItems + 1][capacity + 1];
+
 
         for (item = 0; item <= numberOfItems; item++) {
-            for (itemWeight = 0; itemWeight <= sackMax; itemWeight++) {
+            for (itemWeight = 0; itemWeight <= capacity; itemWeight++) {
                 if (item == 0 || itemWeight == 0) {
+                    //la premiere fois (premiere ligne duu matrix tout est 0)
                     matrix[item][itemWeight] = 0;
-                } else if (weights[item - 1] <= itemWeight) {
-                    matrix[item][itemWeight] = Math.max(weights[item - 1] + matrix[item - 1][itemWeight - weights[item - 1]], matrix[item - 1][itemWeight]);
+                } else if (weight.get(item - 1) <= itemWeight) {
+                    matrix[item][itemWeight] = Math.max(weight.get(item - 1) + matrix[item - 1][itemWeight - weight.get(item - 1)], matrix[item - 1][itemWeight]);
                 } else {
                     matrix[item][itemWeight] = matrix[item - 1][itemWeight];
                 }
             }
         }
-
+/*
         System.out.println();
 
         for (int i = 0; i < matrix.length; i++) {
@@ -41,14 +55,93 @@ public class SolverD {
                 System.out.print(matrix[i][j] + " ");
             }
             System.out.println();
+            System.out.println();
+        }
+*/
+
+        //le dernier element est celui qui contient la meilleure solution
+        int maxWeight = matrix[numberOfItems][capacity];
+//        System.out.println(maxWeight);
+
+        List<Integer> combinaison = new ArrayList<>();
+
+        for (int i = numberOfItems; i > 0 && maxWeight > 0; i--) {
+
+            if (maxWeight == matrix[i - 1][capacity]) {
+                continue;
+            } else {
+                //System.out.print(weight.get(i - 1) + " ");
+                //on boucle sur toutes les produits et on ajoute celui la combinaison la plus proche du capacite dans combinaison
+                combinaison.add(weight.get(i - 1));
+                maxWeight = maxWeight - weight.get(i - 1);
+                capacity = capacity - weight.get(i - 1);
+            }
         }
 
-        System.out.println();
-
-        if (matrix[numberOfItems][sackMax] == sackMax) {
-            System.out.println("POSSIBLE");
-        } else {
-            System.out.println("IMPOSSIBLE");
+        /**
+         * on verifie que la sum des combinaison obtenu est bien la capacite du sac
+         * sinon on peut avoir des solution qui sont moins de la taille du sac
+         */
+        int sum = 0;
+        for (Integer i : combinaison) {
+            sum += i;
         }
+        if (sum == oldCapacity) {
+            Collections.sort(combinaison);
+            //on ajoute la combinaison dans une liste des combinaison possible
+            solutions.add(combinaison);
+            for (Integer i : combinaison) {
+                /**
+                 * on enleve les produits qui se trouve dans la combinaison choisi pour la
+                 * methode recursive puisse trouver si il existe une autre combinaison
+                 * possible avec les produits restants
+                 **/
+                weight.remove(i);
+            }
+            //recursive
+            return getSolution(solutions, weight, oldCapacity);
+        }
+        //si il existe pas d'autre solutions, retourner la liste des solutions obtenu
+        return solutions;
+    }
+
+    /**
+     * @param instance les données saisis
+     * @return une itération sur les produit prix pour une solution retrouver
+     */
+    @Override
+    public Iterator<ISolution> getIterator(Instance instance) {
+        ArrayList<ISolution> solve = new ArrayList<>();
+        List<List<Integer>> solutions = new ArrayList<>();
+        List<Integer> weight = new ArrayList<>(instance.getWeights());
+        Collections.sort(weight);
+
+        getSolution(solutions, weight, instance.getCapacity());
+
+        LoggerMT.show("Les solutions possibles :" + solutions);
+
+        for (List<Integer> solution : solutions) {
+            List<Boolean> takes = new ArrayList<>();
+
+            for (int e = 0; e < instance.getNumberOfProducts(); e++) {
+                boolean isTaken = false;
+                for (int k = solution.size() - 1; k >= 0; k--) {
+                    if (instance.getWeights(e) == solution.get(k)) {
+                        isTaken = true;
+                        solution.remove(k);
+                        break;
+                    }
+                }
+                takes.add(isTaken);
+            }
+            ISolution solutionS = new SolutionMT(takes);
+            solve.add(solutionS);
+        }
+        return solve.iterator();
+    }
+
+    @Override
+    public boolean isFeasible(Instance instance, ISolution solution) {
+        return false;
     }
 }
