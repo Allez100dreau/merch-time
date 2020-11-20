@@ -1,7 +1,8 @@
 package unice.solver;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import unice.instance.Instance;
-import unice.logger.LoggerMT;
 import unice.solution.ISolution;
 import unice.solution.SolutionMT;
 
@@ -11,6 +12,8 @@ import java.util.Iterator;
 import java.util.List;
 
 public class SolverD implements ISolver {
+
+    private static final Logger log = LoggerFactory.getLogger(SolverD.class);
 
     /**
      * Méthode recursive :
@@ -108,7 +111,7 @@ public class SolverD implements ISolver {
 
         getSolution(solutions, weight, instance.getCapacity());
 
-        LoggerMT.show("Les solutions possibles :" + solutions);
+        log.info("Les solutions possibles : {}", solutions);
 
         for (List<Integer> solution : solutions) {
             List<Boolean> takes = new ArrayList<>();

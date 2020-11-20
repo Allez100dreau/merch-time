@@ -1,16 +1,22 @@
 package unice;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import unice.instance.Instance;
 import unice.instance.InstanceMT;
 import unice.solution.ISolution;
 import unice.solution.ISolutionChecker;
 import unice.solution.SolutionChecker;
-import unice.logger.LoggerMT;
-import unice.solver.*;
+import unice.solver.ISolver;
+import unice.solver.SolverD;
+import unice.solver.SolverE;
+import unice.solver.SolverH;
 
 import java.util.Iterator;
 
 public class MetaMerch {
+
+    private static final Logger log = LoggerFactory.getLogger(MetaMerch.class);
 
     private static Instance parseInstance() {
         return new InstanceMT();
@@ -18,6 +24,7 @@ public class MetaMerch {
 
     /**
      * Ici on decide quelle solution on veut adopter
+     *
      * @return la solution choisit
      */
     private static ISolver makeSolver() {
@@ -27,11 +34,10 @@ public class MetaMerch {
         //return new SolverH();
     }
 
-    private MetaMerch() {}
+    private MetaMerch() {
+    }
 
     public static void main(String[] args) {
-
-        LoggerMT.init(false,true);
 
         final Instance instance = parseInstance();
         final ISolver solver = makeSolver();
@@ -39,7 +45,6 @@ public class MetaMerch {
         String answer = "IMPOSSIBLE";
         final Iterator<ISolution> iterator = solver.getIterator(instance);
         ISolutionChecker solutionChecker = new SolutionChecker();
-
 
         while (iterator.hasNext()) {
             ISolution solution = iterator.next();
@@ -53,6 +58,6 @@ public class MetaMerch {
         }
 
 
-        LoggerMT.result(answer);
+        log.info(answer);
     }
 }
