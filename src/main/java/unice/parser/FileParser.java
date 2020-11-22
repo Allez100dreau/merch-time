@@ -2,18 +2,10 @@ package unice.parser;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import unice.instance.Instance;
 import unice.instance.InstanceMT;
-
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
-import java.util.regex.Pattern;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -26,12 +18,20 @@ public class FileParser {
    private static final Logger log = LoggerFactory.getLogger(FileParser.class);
 
     public void parseFile(String file) {
-        BufferedReader br;
+
         try {
+            InputStream is = FileParser.class.getClassLoader().getResourceAsStream("input/"+file);
+            if (is == null) try {
+                throw new IOException();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-            br = new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("input/"+file), "UTF-8"));
-
+            InputStreamReader isr = new InputStreamReader(is, UTF_8);
+            BufferedReader br = new BufferedReader(isr);
             String line = br.readLine();
+
+
             capacity = Integer.parseInt(line);
             log.info("Capacity : {}" ,capacity);
             line = br.readLine();
@@ -62,11 +62,6 @@ public class FileParser {
 
     }
     public void parseAllFiles() {
-
-        String projectDirAbsolutePath = Paths.get("").toAbsolutePath().toString();
-        Path resourcesPath = Paths.get(projectDirAbsolutePath, "/src/main/resources");
-        getClass().getClassLoader().getResourceAsStream(resourcesPath.toString());
-
 
         InputStream is = FileParser.class.getClassLoader().getResourceAsStream("input");
         if (is == null) try {
