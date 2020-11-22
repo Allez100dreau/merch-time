@@ -1,5 +1,7 @@
 package unice.instance;
 
+import unice.parser.FileParser;
+
 import java.util.*;
 
 
@@ -16,19 +18,39 @@ public class InstanceMT implements Instance {
     private final int numberOfProducts;
     private final int capacity;
     private final List<Integer>  weights;
+    private FileParser parser = new FileParser();
 
-    public InstanceMT() {
-        weights = new ArrayList<>();
-        capacity = scanner.nextInt();
-        numberOfProducts = scanner.nextInt();
+    public InstanceMT(boolean isParsing) {
 
-        for (int i = 0; i < numberOfProducts; i++) {
-            weights.add( scanner.nextInt());
+        /**
+         *  Soit on choisit de lire avec un fichier, soit directement avec l'input utilisateur
+         *  a voir si par la suite on utilise directement parseAllFiles et on renvoie directement tous les output sous la forme d'un tableau d'instance
+         *
+          */
+
+        if(isParsing)
+        {
+            parser.parseFile("input0.txt");
+           // parser.parseAllFiles();
+            capacity = parser.getCapacity();
+            numberOfProducts = parser.getNumberOfProducts();
+            weights = parser.getWeights();
+        }
+        else {
+            weights = new ArrayList<>();
+            capacity = scanner.nextInt();
+            numberOfProducts = scanner.nextInt();
+
+            for (int i = 0; i < numberOfProducts; i++) {
+                weights.add(scanner.nextInt());
+            }
         }
 
         Collections.sort(weights);
         Collections.reverse(weights);
     }
+
+
 
     public InstanceMT(int capacity, int numberOfProducts, List<Integer>  weights) {
         this.numberOfProducts = numberOfProducts;

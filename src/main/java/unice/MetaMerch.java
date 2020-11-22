@@ -19,7 +19,8 @@ public class MetaMerch {
     private static final Logger log = LoggerFactory.getLogger(MetaMerch.class);
 
     private static Instance parseInstance() {
-        return new InstanceMT();
+        //true pour lecture de fichier false pour user input
+        return new InstanceMT(true);
     }
 
     /**
