@@ -33,20 +33,20 @@ public class FileParser {
 
 
             capacity = Integer.parseInt(line);
-            log.info("Capacity : {}" ,capacity);
+            log.debug("Capacity : {}" ,capacity);
             line = br.readLine();
             nbProducts = Integer.parseInt(line);
-            log.info("nbProducts : {}" ,nbProducts);
+            log.debug("nbProducts : {}" ,nbProducts);
 
             weights = new ArrayList<>();
             String s[]= br.readLine().split(" ");
             for(String str : s)
                 weights.add(Integer.parseInt(str));
 
-            log.info("poids  : {}",weights);
+            log.debug("poids : {}",weights);
             br.close();
 
-            log.info("Parsed file : {}", file);
+            log.debug("Parsed file : {}", file);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (IOException e) {

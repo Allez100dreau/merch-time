@@ -25,13 +25,14 @@
             <totalSizeCap>${TOTAL_SIZE_MB:-200}MB</totalSizeCap>
         </rollingPolicy>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>INFO</level>
+            <level>debug</level>
         </filter>
     </appender>
 
     <root level="INFO">
         <appender-ref ref="stdout"/>
     </root>
+
     <root level="DEBUG">
         <appender-ref ref="file_out"/>
     </root>

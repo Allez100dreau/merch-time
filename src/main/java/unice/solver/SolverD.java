@@ -111,7 +111,7 @@ public class SolverD implements ISolver {
 
         getSolution(solutions, weight, instance.getCapacity());
 
-        log.info("Les solutions possibles : {}", solutions);
+        log.debug("Les solutions possibles : {}", solutions);
 
         for (List<Integer> solution : solutions) {
             List<Boolean> takes = new ArrayList<>();

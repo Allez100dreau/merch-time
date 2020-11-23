@@ -42,7 +42,7 @@ public class SolverE implements ISolver {
         nouvelleCombinaison.add(weight.get(0));
         weight.remove(0);
         List<Integer> instanceSecondaire = new ArrayList<>(weight);
-        //log.info(nouvelleCombinaison);
+        //log.debug(nouvelleCombinaison);
 
 
         solve = solver(solutions, nouvelleCombinaison, capacity);
@@ -55,7 +55,7 @@ public class SolverE implements ISolver {
                     combinaisonSecondaire.add(instanceSecondaire.get(i));
                     instanceSecondaire.remove(i);
                     i--;
-                    //log.info(combinaisonSecondaire);
+                    //log.debug(combinaisonSecondaire);
 
                     solve = solver(solutions, combinaisonSecondaire, capacity);
                     if (solve == 0) {
@@ -116,7 +116,7 @@ public class SolverE implements ISolver {
 
         getSolution(solutions, new ArrayList<Integer>(), weight, instance.getCapacity());
 
-        log.info("Les solutions possible : {}", solutions);
+        log.debug("Les solutions possible : {}", solutions);
 
         for (List<Integer> solution : solutions) {
             List<Boolean> takes = new ArrayList<>();
