@@ -1,6 +1,7 @@
 package unice.solver;
 
 import unice.instance.Instance;
+import unice.instance.InstanceMT;
 import unice.solution.ISolution;
 import unice.solution.SolutionMT;
 
@@ -20,8 +21,6 @@ public class SolverH implements ISolver {
         for (int i = 0; i < I.getNumberOfProducts(); i++) items.add(I.getWeights(i));
 
         boolean[] chosenItems = new boolean[I.getNumberOfProducts()] ;
-        //List<Boolean> chosenItems = new ArrayList<>();
-        //for (int i = 0; i < I.getNumberOfProducts(); i++) chosenItems.add(false);
 
         int wCopy = I.getCapacity();
         int chosenItem = 0;
@@ -34,12 +33,10 @@ public class SolverH implements ISolver {
                 // Put it in the backpack
                 items.remove(0);
 
-                //chosenItems.set(i, true);
                 chosenItems[i] = true ; //add the chosen item to the list of chosen items
 
                 wCopy -= chosenItem;
-            } else {
-                // Else, don't use it
+            } else { // Else, don't use it
                 items.remove(0);
             }
         }
@@ -72,6 +69,22 @@ public class SolverH implements ISolver {
      */
     @Override
     public boolean isFeasible(Instance instance, ISolution solution) {
-        return false;
+        List<Integer> remainingItems = new ArrayList<>();
+        for (int i = 0; i < instance.getNumberOfProducts(); i++) {
+            if (!solution.take(i)) {
+                remainingItems.add(instance.getWeights(i));
+            }
+        }
+        int remainingNumberOfProducts = remainingItems.size() ;
+        Instance remainingInstance = new InstanceMT(instance.getCapacity() , remainingNumberOfProducts , remainingItems ) ;
+
+        int capacity2 = 0 ; //capacity of the chosen Items from the remaining items
+        List<Boolean> chosenItemsFromRemainingItems = solve(remainingInstance).getChosenItems() ;
+        for (int i = 0; i < chosenItemsFromRemainingItems.size(); i++) {
+            if (chosenItemsFromRemainingItems.get(i) == true){ //if the item is taken we add it's weight to the capacity
+                capacity2 += remainingInstance.getWeights() .get(i) ;
+            }
+        }
+        return capacity2 == instance.getCapacity() ;
     }
 }
