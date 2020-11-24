@@ -22,20 +22,20 @@ public class SolverH implements ISolver {
 
         boolean[] chosenItems = new boolean[I.getNumberOfProducts()] ;
 
-        int wCopy = I.getCapacity();
+        int knapSackWeight = 0;
         int chosenItem;
 
         for (int i = 0, stop = items.size(); i < stop; i++) {
             chosenItem = items.get(0); // We choose the heaviest item
-            if (wCopy == 0) { // if the knapsack is full we stop
+            if (knapSackWeight == I.getCapacity()) { // if the knapsack is full we stop
                 break;
-            } else if (chosenItem <= wCopy) { // If the item fits the backpack
+            } else if (chosenItem + knapSackWeight <= I.getCapacity()) { // If the item fits the backpack
                 // Put it in the backpack
                 items.remove(0);
 
                 chosenItems[i] = true ; //add the chosen item to the list of chosen items
 
-                wCopy -= chosenItem;
+                knapSackWeight += chosenItem;
             } else { // Else, don't use it
                 items.remove(0);
             }
