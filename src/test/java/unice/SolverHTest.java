@@ -7,19 +7,20 @@ import java.util.*;
 import static org.junit.Assert.*;
 
 public class SolverHTest {
-    InstanceMT instanceMT ;
-    int capacity ;
-    int numberOfProducts;
-    List<Integer> weights;
 
-    SolverH solverH ;
+    private InstanceMT instanceMT ;
+    private int capacity ;
+    private int numberOfProducts;
+    private List<Integer> weights;
+
+    private SolverH solverH ;
 
 
     void setUp(){
         capacity = 20 ;
         numberOfProducts = 4;
-        weights = Arrays.asList(new Integer[] {6,14,10,7}) ;
-        instanceMT = new InstanceMT(capacity , numberOfProducts, weights );
+        weights = Arrays.asList(6,14,10,7) ;
+        instanceMT = new InstanceMT(capacity ,numberOfProducts, weights);
 
         solverH = new SolverH() ;
     }
@@ -27,15 +28,11 @@ public class SolverHTest {
     @Test
     public void solve(){
         setUp();
-        List<Boolean> expectedResult = new ArrayList<>(Arrays.asList(true,true,false,false));
 
-        List<Boolean> actualResult = solverH.solve(instanceMT).getChosenItems() ;
+        boolean[] expectedResult = {true, true, false, false};
 
+        boolean[] actualResult = solverH.solve(instanceMT).getChosenItems() ;
 
-        assertEquals(expectedResult , actualResult);
-
-        //System.out.println(solverH.solve(instanceMT).getChosenItems()) ;
+        assertEquals(Arrays.toString(expectedResult), Arrays.toString(actualResult));
     }
-
-
 }

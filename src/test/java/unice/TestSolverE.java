@@ -13,7 +13,6 @@ public class TestSolverE {
 
     SolverE solverE;
 
-
     @Test
     public void getSolutionTest()
     {
@@ -28,7 +27,7 @@ public class TestSolverE {
         Collections.sort(weight);
         int capacity = 10;
 
-        List<List<Integer>> newSolution = solverE.getSolution(new ArrayList<List<Integer>>(),new ArrayList<Integer>(),weight,capacity);
+        List<List<Integer>> newSolution = solverE.getSolution(new ArrayList<>(),new ArrayList<>(),weight,capacity);
         assertTrue(newSolution.contains(sol1));
 
 
@@ -41,7 +40,7 @@ public class TestSolverE {
         Collections.sort(weight2);
         capacity = 21;
 
-        newSolution = solverE.getSolution(new ArrayList<List<Integer>>(),new ArrayList<Integer>(),weight2,capacity);
+        newSolution = solverE.getSolution(new ArrayList<>(),new ArrayList<>(),weight2,capacity);
         assertEquals( 1,newSolution.size());
 
 
@@ -54,7 +53,7 @@ public class TestSolverE {
         Collections.sort(weight3);
         capacity = 20;
 
-        newSolution = solverE.getSolution(new ArrayList<List<Integer>>(),new ArrayList<Integer>(),weight3,capacity);
+        newSolution = solverE.getSolution(new ArrayList<>(),new ArrayList<>(),weight3,capacity);
         assertEquals( 1,newSolution.size()); // logiquement 1
 
 
@@ -64,17 +63,17 @@ public class TestSolverE {
     public void getIteratorTest(){
         solverE = new SolverE();
 
-        Integer[] weights =  {7, 13, 13, 8, 8 ,8};
+        Integer[] weights = {7, 13, 13, 8, 8 ,8};
         List<Integer> w = Arrays.asList(weights);
         List<Integer> weight = new ArrayList<>(w);
         Instance instanceMT = new InstanceMT(21,6,weight);
-        Boolean[] s1 = {false,true,false,true,false,false};
-        List<Boolean> sol = Arrays.asList(s1);
+        boolean[] sol = {false,true,false,true,false,false};
+
         ISolution solution= new SolutionMT(sol);
         List<ISolution> listeSol = new ArrayList<>();
         listeSol.add(solution);
-        assertEquals(solverE.getIterator(instanceMT).next().getChosenItems(),listeSol.iterator().next().getChosenItems());
-        assertEquals(solverE.getIterator(instanceMT).next().getChosenItems(),sol);
+        assertEquals(Arrays.toString(solverE.getIterator(instanceMT).next().getChosenItems()), Arrays.toString(listeSol.iterator().next().getChosenItems()));
+        assertEquals(Arrays.toString(solverE.getIterator(instanceMT).next().getChosenItems()), Arrays.toString(sol));
 
         //test 3
         solverE = new SolverE();
@@ -84,10 +83,9 @@ public class TestSolverE {
         List<Integer> weight3 = new ArrayList<>(w3);
         instanceMT = new InstanceMT(20,4,weight3);
 
-        Boolean[] s2 = {true,true,false,false};
-        List<Boolean> sol2 = Arrays.asList(s2);
+        boolean[] sol2 = {true,true,false,false};
 
-        assertEquals(solverE.getIterator(instanceMT).next().getChosenItems(),sol2);
+        assertEquals(Arrays.toString(solverE.getIterator(instanceMT).next().getChosenItems()), Arrays.toString(sol2));
     }
 
     @Test
@@ -119,8 +117,7 @@ public class TestSolverE {
         Integer[] w = {7,13,13,8,8,8};
         List<Integer> weights = Arrays.asList(w);
         //solution choisi
-        Boolean[] s = {false,true,false,true,false,false};
-        List<Boolean> sol = Arrays.asList(s);
+        boolean[] sol = {false,true,false,true,false,false};
 
         Instance instance = new InstanceMT(21,6,weights);
         ISolution solution = new SolutionMT(sol);
@@ -132,22 +129,18 @@ public class TestSolverE {
         Integer[] w1 = {6,1,1,1,1,2,1,7,5,2,1};
         weights = Arrays.asList(w1);
         //solution choisi
-        Boolean[] s1 = {false,true,true,true,true,true,true,false,false,true,true};
-        sol = Arrays.asList(s1);
-
+        boolean[] s1 = {false,true,true,true,true,true,true,false,false,true,true};
         instance = new InstanceMT(10,11,weights);
-        solution = new SolutionMT(sol);
+        solution = new SolutionMT(s1);
 
         assertFalse(solverE.isFeasible(instance,solution));
 
         //3eme test
         //on garde les meme prix mais on prend une nouvelle solution qui ne marche pas
         //solution choisi
-        Boolean[] s2 = {true,true,true,true,true,false,false,false,false,false,false};
-        sol = Arrays.asList(s2);
-
+        boolean[] s2 = {true,true,true,true,true,false,false,false,false,false,false};
         instance = new InstanceMT(10,11,weights);
-        solution = new SolutionMT(sol);
+        solution = new SolutionMT(s2);
 
         assertTrue(solverE.isFeasible(instance,solution));
 
@@ -156,17 +149,10 @@ public class TestSolverE {
         Integer[] w2 = {6, 14 ,10 ,7};
         List<Integer> weights2 = Arrays.asList(w2);
         //solution choisi
-        Boolean[] s4 = {true,true,false,false};
-        sol = Arrays.asList(s4);
+        boolean[] s4 = {true,true,false,false};
         instance = new InstanceMT(20,4,weights2);
-        solution = new SolutionMT(sol);
+        solution = new SolutionMT(s4);
 
         assertFalse(solverE.isFeasible(instance,solution));
-
     }
-
-
-
-
-
 }

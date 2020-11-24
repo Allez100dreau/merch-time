@@ -13,6 +13,6 @@ public interface ISolution {
 
     boolean take(int i);
 
-    List<Boolean> getChosenItems();
+    boolean[] getChosenItems();
 
 }

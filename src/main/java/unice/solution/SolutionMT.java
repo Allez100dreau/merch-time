@@ -1,28 +1,26 @@
 package unice.solution;
 
 
-import java.util.List;
-
 public class SolutionMT implements ISolution {
 
-    List<Boolean> chosenItems;
+    private final boolean[] chosenItems;
 
-    public SolutionMT(List<Boolean> chosenItems) {
+    public SolutionMT(boolean[] chosenItems) {
         this.chosenItems = chosenItems;
     }
 
     @Override
     public int getN() {
-        return this.chosenItems.size();
+        return this.chosenItems.length;
     }
 
     @Override
     public boolean take(int i) {
-        return this.chosenItems.get(i);
+        return this.chosenItems[i];
     }
 
     @Override
-    public List<Boolean> getChosenItems() {
+    public boolean[] getChosenItems() {
         return chosenItems;
     }
 }

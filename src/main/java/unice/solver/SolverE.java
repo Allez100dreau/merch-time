@@ -6,10 +6,7 @@ import unice.instance.Instance;
 import unice.solution.ISolution;
 import unice.solution.SolutionMT;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class SolverE implements ISolver {
 
@@ -88,8 +85,8 @@ public class SolverE implements ISolver {
 
     private static int solver(List<List<Integer>> solutions, List<Integer> combination, int capacity) {
 
-        for (int i = 0; i < combination.size(); i++) {
-            capacity -= combination.get(i);
+        for (Integer integer : combination) {
+            capacity -= integer;
         }
         if (capacity < 0) {
             return 1;
@@ -114,12 +111,12 @@ public class SolverE implements ISolver {
         Collections.sort(weight);
         Collections.reverse(weight);
 
-        getSolution(solutions, new ArrayList<Integer>(), weight, instance.getCapacity());
+        getSolution(solutions, new ArrayList<>(), weight, instance.getCapacity());
 
         log.debug("Les solutions possible : {}", solutions);
 
         for (List<Integer> solution : solutions) {
-            List<Boolean> takes = new ArrayList<>();
+            boolean[] takes = new boolean[instance.getNumberOfProducts()];
 
             for (int e = 0; e < instance.getNumberOfProducts(); e++) {
                 boolean isTaken = false;
@@ -130,7 +127,7 @@ public class SolverE implements ISolver {
                         break;
                     }
                 }
-                takes.add(isTaken);
+                takes[e] = isTaken;
             }
             ISolution solutionS = new SolutionMT(takes);
             solve.add(solutionS);

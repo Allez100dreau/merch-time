@@ -23,7 +23,7 @@ public class SolverH implements ISolver {
         boolean[] chosenItems = new boolean[I.getNumberOfProducts()] ;
 
         int wCopy = I.getCapacity();
-        int chosenItem = 0;
+        int chosenItem;
 
         for (int i = 0, stop = items.size(); i < stop; i++) {
             chosenItem = items.get(0); // We choose the heaviest item
@@ -40,11 +40,7 @@ public class SolverH implements ISolver {
                 items.remove(0);
             }
         }
-        List<Boolean> chosenItemsList = new ArrayList<>();
-        for(boolean bool:chosenItems) {
-            chosenItemsList.add(bool);
-        }
-        return new SolutionMT(chosenItemsList);
+        return new SolutionMT(chosenItems);
     }
 
     /**
@@ -79,9 +75,9 @@ public class SolverH implements ISolver {
         Instance remainingInstance = new InstanceMT(instance.getCapacity() , remainingNumberOfProducts , remainingItems ) ;
 
         int capacity2 = 0 ; //capacity of the chosen Items from the remaining items
-        List<Boolean> chosenItemsFromRemainingItems = solve(remainingInstance).getChosenItems() ;
-        for (int i = 0; i < chosenItemsFromRemainingItems.size(); i++) {
-            if (chosenItemsFromRemainingItems.get(i) == true){ //if the item is taken we add it's weight to the capacity
+        boolean[] chosenItemsFromRemainingItems = solve(remainingInstance).getChosenItems() ;
+        for (int i = 0; i < chosenItemsFromRemainingItems.length; i++) {
+            if (chosenItemsFromRemainingItems[i]){ //if the item is taken we add it's weight to the capacity
                 capacity2 += remainingInstance.getWeights() .get(i) ;
             }
         }

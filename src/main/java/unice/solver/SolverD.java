@@ -114,7 +114,8 @@ public class SolverD implements ISolver {
         log.debug("Les solutions possibles : {}", solutions);
 
         for (List<Integer> solution : solutions) {
-            List<Boolean> takes = new ArrayList<>();
+            boolean[] takes = new boolean[instance.getNumberOfProducts()];
+            //List<Boolean> takes = new ArrayList<>();
 
             for (int e = 0; e < instance.getNumberOfProducts(); e++) {
                 boolean isTaken = false;
@@ -125,7 +126,7 @@ public class SolverD implements ISolver {
                         break;
                     }
                 }
-                takes.add(isTaken);
+                takes[e] = isTaken;
             }
             ISolution solutionS = new SolutionMT(takes);
             solve.add(solutionS);
