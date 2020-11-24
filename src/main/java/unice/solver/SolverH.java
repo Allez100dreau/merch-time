@@ -11,8 +11,9 @@ public class SolverH implements ISolver {
         ArrayList<Integer> items = new ArrayList<>();
         for (int i = 0; i < I.getNumberOfProducts(); i++) items.add(I.getWeights(i));
 
-        List<Boolean> chosenItems = new ArrayList<>();
-        for (int i = 0; i < I.getNumberOfProducts(); i++) chosenItems.add(false);
+        boolean[] chosenItems = new boolean[I.getNumberOfProducts()] ;
+        //List<Boolean> chosenItems = new ArrayList<>();
+        //for (int i = 0; i < I.getNumberOfProducts(); i++) chosenItems.add(false);
 
         int wCopy = I.getCapacity();
         int chosenItem = 0;
@@ -25,15 +26,20 @@ public class SolverH implements ISolver {
                 // Put it in the backpack
                 items.remove(0);
 
-                chosenItems.set(i, true); //add the chosen item to the list of chosen items
+                //chosenItems.set(i, true);
+                chosenItems[i] = true ; //add the chosen item to the list of chosen items
+
                 wCopy -= chosenItem;
             } else {
                 // Else, don't use it
                 items.remove(0);
             }
         }
-
-        return new SolutionMT(chosenItems);
+        List<Boolean> chosenItemsList = new ArrayList<>();
+        for(boolean bool:chosenItems) {
+            chosenItemsList.add(bool);
+        }
+        return new SolutionMT(chosenItemsList);
     }
 
     @Override
