@@ -52,6 +52,7 @@ public class MetaMerch {
 
             solutionChecker.checkValidity(instance, solution);
 
+
             if (!solver.isFeasible(instance, solution)) {
                 answer = "POSSIBLE";
 

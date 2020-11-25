@@ -30,14 +30,15 @@ public class SolverE implements ISolver {
             return solutions;                       // on retourne les solutions actuelles
         }
         ////////// SI INSTANCE EST SOLUTION /////////////////
-        boolean[] soluceBool = took;                // on copie la solution primaire took
+        boolean[] soluceBool = Arrays.copyOf(took,took.length);// on copie la solution primaire took
         int sum = primerSolution ;                  // sommes de tous les objets pris dans took
         for(int e = 0 ; e < weight.size() ; e++){
             sum+= weight.get(e);                    // on ajoute les poids/prix de tous les objets de l'instance
             soluceBool[indice+e] =  true;           // on set à true à partir de indice (car on estime que l'on prend tout ce qui suit indice)
         }
+
         int solve = solver(solutions, soluceBool,sum, capacity); // on récupère 0, 1 ou 2 en fonction du solver
-        if (solve == 0) {                           // si 0 alors c'est une nouvelle solution
+        if (solve == 0) {// si 0 alors c'est une nouvelle solution
             solutions.add(soluceBool);              // on l'ajoute à toutes les solutions
             return solutions;                       // on retourne les solutions actuelles car ça ne sert à rien de continuer (il n'existe pas d'item "gratuit")
         }
@@ -48,7 +49,7 @@ public class SolverE implements ISolver {
         }
 
         ///////// RECHERCHE APPROFONDIE //////////
-        boolean[] nouvelleCombinaisonBool = took;   // on crée une liste de la taille de la solution primaire "took"
+        boolean[] nouvelleCombinaisonBool = Arrays.copyOf(took,took.length);   // on crée une liste de la taille de la solution primaire "took"
         int nouvelleCombinaison = primerSolution+weight.get(0); // la somme des poids de la solution primaire + le nouvel élément
         nouvelleCombinaisonBool[indice]  =  true;   // on dis que l'on prend l'élément premier
         weight.remove(0);                        // on supprime ce même élément de tout les items car on va traiter toutes les possibilités avec
@@ -67,7 +68,9 @@ public class SolverE implements ISolver {
                 for (int i = 0; i < instanceSecondaire.size(); i++) { // pour chaque éléments restants
                     indice++;                       // on incrémente l'indice
                     int combinaisonSecondaire = nouvelleCombinaison; // on crée un nouvel accumulateur
-                    boolean[] combinaisonSecondaireBool = nouvelleCombinaisonBool; // on copie la solution actuelle
+
+                    boolean[] combinaisonSecondaireBool = Arrays.copyOf(nouvelleCombinaisonBool,nouvelleCombinaisonBool.length); // on copie la solution actuelle
+
                     combinaisonSecondaire+= instanceSecondaire.get(i); // on ajoute le poids de l'élément en question à l'accumulateur
                     combinaisonSecondaireBool[indice] = true;          // on dit que l'on prend cette item
                     instanceSecondaire.remove(i);   // on le supprime de l'instance secondaire car on va traiter toutes les possibilités avec
@@ -136,7 +139,7 @@ public class SolverE implements ISolver {
         }
         getSolution(solutions,took, 0, weight, instance.getCapacity(), 0);
 
-        log.debug("Les solutions possible : {}", solutions);
+        //log.debug("Les solutions possible : {}", solutions);
 
         for (boolean[] solution : solutions) {
             ISolution solutionS = new SolutionMT(solution);
@@ -179,6 +182,11 @@ public class SolverE implements ISolver {
             if (!solution.take(i)) {
                 rest.add(instance.getWeights(i));
             }
+        }
+
+        boolean[] took = new boolean[instance.getNumberOfProducts()];
+        for(int i = 0 ; i< instance.getNumberOfProducts();i++){
+            took[i] = false ;
         }
         return knapsackRec(rest, rest.size(), instance.getCapacity()) == instance.getCapacity();
     }
