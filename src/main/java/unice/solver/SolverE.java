@@ -131,8 +131,6 @@ public class SolverE implements ISolver {
         ArrayList<ISolution> solve = new ArrayList<>();
         List<boolean[]> solutions = new ArrayList<>();
         List<Integer> weight = new ArrayList<>(instance.getWeights());
-        Collections.sort(weight);
-        Collections.reverse(weight);
         boolean[] took = new boolean[instance.getNumberOfProducts()];
         for(int i = 0 ; i< instance.getNumberOfProducts();i++){
             took[i] = false ;
