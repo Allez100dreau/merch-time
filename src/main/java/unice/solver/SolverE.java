@@ -30,6 +30,7 @@ public class SolverE implements ISolver {
         if (weight.isEmpty()) {                     // si il n'y a plus d'items
             return solutions;                       // on retourne les solutions actuelles
         }
+        int stockElement = weight.get(0);
         ////////// SI INSTANCE EST SOLUTION /////////////////
         boolean[] soluceBool = Arrays.copyOf(took,took.length);// on copie la solution primaire took
         int soluce = primerSolution ;               // sommes de tous les objets pris dans took
@@ -62,34 +63,53 @@ public class SolverE implements ISolver {
         }
 
         //////// POSSIBILITE DE RAJOUTER DES ELEMENTS ///////////
-        else if (solve == 2) {                      // 2 signifie que l'on est en dessous de la capacité donc on peut rajouter des éléments
-            if (!instanceSecondaire.isEmpty()) {    // si il reste des éléments à ajouter
-                for (int i = 0; i < instanceSecondaire.size(); i++) { // pour chaque éléments restants
-                    int combinaisonSecondaire = nouvelleCombinaison + instanceSecondaire.get(i); // accumulateur de nouvelle combinaison et du nouvel élément
-                    boolean[] combinaisonSecondaireBool = Arrays.copyOf(nouvelleCombinaisonBool,nouvelleCombinaisonBool.length); // on copie la solution actuelle
-                    combinaisonSecondaireBool[saveIndice+1] = true; // on dit que l'on prend cette item
-                    instanceSecondaire.remove(i);   // on le supprime de l'instance secondaire car on va traiter toutes les possibilités avec
-                    saveIndice += 1;                // on incrémente l'indice
-                    i--;                            // on décrémente l'indice de la boucle for pour ne manquer aucun éléments
-                    solve = solver(solutions,combinaisonSecondaireBool, combinaisonSecondaire, capacity); // on récupère la réponse de solver (0,1 ou 2)
+        else if (solve == 2 && !instanceSecondaire.isEmpty()) { // 2 signifie que l'on est en dessous de la capacité donc on peut rajouter des éléments et si il reste des éléments à ajouter
+            int stockSecondaire = 0 ;
+            for (int i = 0; i < instanceSecondaire.size(); i++) { // pour chaque éléments restants
+                stockSecondaire = instanceSecondaire.get(0);
+                int combinaisonSecondaire = nouvelleCombinaison + instanceSecondaire.get(i); // accumulateur de nouvelle combinaison et du nouvel élément
+                boolean[] combinaisonSecondaireBool = Arrays.copyOf(nouvelleCombinaisonBool,nouvelleCombinaisonBool.length); // on copie la solution actuelle
+                combinaisonSecondaireBool[saveIndice+1] = true; // on dit que l'on prend cette item
+                instanceSecondaire.remove(i);   // on le supprime de l'instance secondaire car on va traiter toutes les possibilités avec
+                saveIndice += 1;                // on incrémente l'indice
+                i=-1;                           // on décrémente l'indice de la boucle for pour ne manquer aucun éléments
 
-                    //////// UNE SOLUTION DE TAILLE 2 //////////
-                    if (solve == 0) {               // c'est une solution
-                        solutions.add(combinaisonSecondaireBool); // on l'ajoute
-                        continue;                   // on skip et on passe aux éléments suivants car on a atteint la capacité (inutile de rajouter des items)
+                solve = solver(solutions,combinaisonSecondaireBool, combinaisonSecondaire, capacity); // on récupère la réponse de solver (0,1 ou 2)
+
+                //////// UNE SOLUTION DE TAILLE 2 //////////
+                if (solve == 0) {               // c'est une solution
+                    solutions.add(combinaisonSecondaireBool); // on l'ajoute
+                    if(!instanceSecondaire.isEmpty() &&  instanceSecondaire.get(0)==stockSecondaire) {
+                        instanceSecondaire.remove(0);
+                        saveIndice++;
                     }
-                    /////// ON A DEPASSE LE MAX /////////
-                    else if (solve == 1) {          // on a dépassé la capacité inutile d'ajouter des éléments
-                        continue;                   // on skip aussi
-                    }
-                    /////// ON CHERCHE PLUS LOIN //////
-                    List<Integer> newInstance = new ArrayList<>(instanceSecondaire);
-                    getSolution(solutions, combinaisonSecondaireBool,combinaisonSecondaire,newInstance,capacity,saveIndice+1,false); // il y a encore de la capacité donc on continue avec la solution, accumulateur, instance actuelle et on va donc ajouter d'autres éléments (à partir de l'indice suivant)
+                    continue;                   // on skip et on passe aux éléments suivants car on a atteint la capacité (inutile de rajouter des items)
                 }
+                /////// ON A DEPASSE LE MAX /////////
+                else if (solve == 1) {          // on a dépassé la capacité inutile d'ajouter des éléments
+                    if(!instanceSecondaire.isEmpty() && instanceSecondaire.get(0)==stockSecondaire) {
+                        instanceSecondaire.remove(0);
+                        saveIndice++;
+                    }
+                    continue;                   // on skip aussi
+
+                }
+                /////// ON CHERCHE PLUS LOIN //////
+                List<Integer> newInstance = new ArrayList<>(instanceSecondaire);
+                getSolution(solutions, combinaisonSecondaireBool,combinaisonSecondaire,newInstance,capacity,saveIndice+1,false); // il y a encore de la capacité donc on continue avec la solution, accumulateur, instance actuelle et on va donc ajouter d'autres éléments (à partir de l'indice suivant)
             }
         }
         if(!restart){
             return solutions;
+        }
+        if(!weight.isEmpty()) {
+            while (weight.get(0) == stockElement) {
+                weight.remove(0);
+                indice++;
+                if (weight.isEmpty()) {
+                    break;
+                }
+            }
         }
         //////// ON RECOMMENCE EN PARTANT DE L'ELEMENT SUIVANT /////////
         return getSolution(solutions, took, 0, weight, capacity, indice + 1,true); // on recommence à partir de l'indice suivant car toutes les combinaisons possible avec le premier élément de l'instance on été testé
@@ -114,7 +134,12 @@ public class SolverE implements ISolver {
             return 2;
         }
         ////// CAPACITE ATTEINTE /////
-        if (capacity == total && !solutions.contains(combination)) { // solution et elle n'est pas encore listée
+        if (capacity == total) { // solution et elle n'est pas encore listée
+            for(boolean[] arr1 : solutions) {
+                if (Arrays.toString(arr1).equals(Arrays.toString(combination))) {
+                    return 1;
+                }
+            }
             return 0;
         }
         ////// CAPACITE DEPASSEE OU SOLUTION DEJA LISTEE/////
@@ -138,11 +163,13 @@ public class SolverE implements ISolver {
 
         getSolution(solutions,took, 0, weight, instance.getCapacity(), 0,true);
 
-        //log.info("Les solutions possible : {}", solutionS.getSolution(instance.getWeights()));
+
+
 
         for (boolean[] solution : solutions) {
             ISolution solutionS = new SolutionMT(solution);
             solve.add(solutionS);
+            log.info("Les solutions possible : {}", solutionS.getSolution(instance.getWeights()));
         }
         return solve.iterator();
     }
