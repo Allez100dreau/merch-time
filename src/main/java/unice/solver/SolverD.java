@@ -3,11 +3,11 @@ package unice.solver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import unice.instance.Instance;
+import unice.instance.InstanceMT;
 import unice.solution.ISolution;
 import unice.solution.SolutionMT;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -16,153 +16,120 @@ public class SolverD implements ISolver {
     private static final Logger log = LoggerFactory.getLogger(SolverD.class);
 
     /**
-     * Méthode recursive :
-     * tant qu'il reste des produit non acheter on boucle pour chercher une solution
+     * Construit la matrice pour toutes les prix possible
+     * et renvoie une solution ISolution
      *
-     * @param solutions liste de combinaison de prix (de somme = à la capacité) qui forme une solution
-     * @param weight    les prix des produit qui ne font pas partie de la solution encore
-     * @param capacity  le budget
-     * @return la liste des solutions possible
+     * @param instance les objets disponibles
+     * @return une solution au problème (les objets mis dans le sac à dos )
      */
-
-    public List<List<Integer>> getSolution(List<List<Integer>> solutions, List<Integer> weight, int capacity) {
-        int oldCapacity = capacity;
-        int numberOfItems = weight.size();
-
-        int item, itemWeight;
+    private ISolution getSolution(Instance instance) {
+        int capacity = instance.getCapacity();
+        int numberOfItems = instance.getNumberOfProducts();
+        List<Integer> weights = instance.getWeights();
 
         /**
-         * la matrix de tout les prix
+         * construction de la matrix de tout les prix possible
+         * Reference : https://dyclassroom.com/dynamic-programming/0-1-knapsack-problem#:~:text=Time%20complexity%20of%200%201,is%20the%20capacity%20of%20knapsack.
          *
          **/
+
         int[][] matrix = new int[numberOfItems + 1][capacity + 1];
 
-        for (item = 0; item <= numberOfItems; item++) {
-            for (itemWeight = 0; itemWeight <= capacity; itemWeight++) {
-                if (item == 0 || itemWeight == 0) {
-                    /**la premiere fois (premiere ligne du matrix tout est 0)*/
-                    matrix[item][itemWeight] = 0;
-                } else if (weight.get(item - 1) <= itemWeight) {
-                    matrix[item][itemWeight] = Math.max(weight.get(item - 1) + matrix[item - 1][itemWeight - weight.get(item - 1)], matrix[item - 1][itemWeight]);
-                } else {
-                    matrix[item][itemWeight] = matrix[item - 1][itemWeight];
+        for (int item = 1; item <= numberOfItems; item++) {
+            for (int itemPrice = 0; itemPrice <= capacity; itemPrice++) {
+                int previousItem = weights.get(item - 1);
+
+                /** si on peut pas acheter un nouveau item,
+                 *  le prix sera celui de l'indice precedent dans la matrix */
+                matrix[item][itemPrice] = matrix[item - 1][itemPrice];
+
+                /** si le prix de l'item actuel est > ou = celui precedent
+                 * et si on peut l'ajouter sans aller au dela de la limite alors on met a jour le prix par apport a l'index */
+                if ((itemPrice >= previousItem) && (matrix[item - 1][itemPrice - previousItem] + previousItem) > matrix[item][itemPrice]) {
+                    matrix[item][itemPrice] = matrix[item - 1][itemPrice - previousItem] + previousItem;
                 }
             }
         }
 
-        /**le dernier element est celui qui contient la meilleure solution*/
-        int maxWeight = matrix[numberOfItems][capacity];
+        /** list chosen used for log only */
+        List<Integer> chosen = new ArrayList<>();
 
-        List<Integer> combinaison = new ArrayList<>();
+        boolean[] itemsChosen = new boolean[numberOfItems];
 
-        for (int i = numberOfItems; i > 0 && maxWeight > 0; i--) {
+        /** on boucle sur toutes les items
+         * on initialiser un tableau de boolean itemsChosen a false
+         * et si le prix possible a payer d'un item i est different que celui precedent (i-1)
+         * on a donc choisi cette produit et on le met true dans le tableau et enlève la le prix du budget */
+        while (numberOfItems != 0) {
+            itemsChosen[numberOfItems - 1] = false;
 
-            if (maxWeight == matrix[i - 1][capacity]) {
-                continue;
-            } else {
-                /**
-                 * on boucle sur toutes les produits et on ajoute la
-                 * combinaison la plus proche du capacite dans combinaison
-                 **/
-                combinaison.add(weight.get(i - 1));
-                maxWeight = maxWeight - weight.get(i - 1);
-                capacity = capacity - weight.get(i - 1);
+            if (matrix[numberOfItems][capacity] != matrix[numberOfItems - 1][capacity]) {
+                itemsChosen[numberOfItems - 1] = true;
+
+                /** list chosen used for log only */
+                chosen.add(weights.get(numberOfItems - 1));
+
+                capacity = capacity - weights.get(numberOfItems - 1);
             }
+            numberOfItems--;
         }
 
-        /**
-         * on verifie que la sum des combinaison obtenu est bien la capacite du sac
-         * sinon on peut avoir des solution qui sont moins de la taille du sac
-         */
-        int sum = combinaison.stream().mapToInt(Integer::intValue).sum();
-
-        if (sum == oldCapacity) {
-            Collections.sort(combinaison);
-            /**on ajoute la combinaison dans une liste des combinaison possible*/
-            solutions.add(combinaison);
-            for (Integer i : combinaison) {
-                /**
-                 * on enleve les produits qui se trouve dans la combinaison choisi pour la
-                 * methode recursive puisse trouver si il existe une autre combinaison
-                 * possible avec les produits restants
-                 **/
-                weight.remove(i);
-            }
-            /**recursive*/
-            return getSolution(solutions, weight, oldCapacity);
+        /** used for log only: log items only if remaining capacity is 0 i.e bag has been filled completely */
+         if (capacity == 0) {
+            log.debug("Items chosen : {}", chosen);
         }
-        /**
-         * si il existe pas d'autre solutions,
-         * retourner la liste des solutions
-         */
-        return solutions;
+
+        return new SolutionMT(itemsChosen);
     }
 
     /**
-     * @param instance les données saisis
-     * @return une itération sur les produit prix pour une solution retrouver
+     * @param instance les objets disponibles
+     * @return un Iterator sur les objets d'une solution trouver
      */
     @Override
     public Iterator<ISolution> getIterator(Instance instance) {
-        ArrayList<ISolution> solve = new ArrayList<>();
-        List<List<Integer>> solutions = new ArrayList<>();
-        List<Integer> weight = new ArrayList<>(instance.getWeights());
-        Collections.sort(weight);
-
-        getSolution(solutions, weight, instance.getCapacity());
-
-        log.debug("Les solutions possibles : {}", solutions);
-
-        for (List<Integer> solution : solutions) {
-            boolean[] takes = new boolean[instance.getNumberOfProducts()];
-            //List<Boolean> takes = new ArrayList<>();
-
-            for (int e = 0; e < instance.getNumberOfProducts(); e++) {
-                boolean isTaken = false;
-                for (int k = solution.size() - 1; k >= 0; k--) {
-                    if (instance.getWeights(e) == solution.get(k)) {
-                        isTaken = true;
-                        solution.remove(k);
-                        break;
-                    }
-                }
-                takes[e] = isTaken;
-            }
-            ISolution solutionS = new SolutionMT(takes);
-            solve.add(solutionS);
-        }
-        return solve.iterator();
+        ArrayList<ISolution> solutions = new ArrayList<>();
+        solutions.add(getSolution(instance));
+        return solutions.iterator();
     }
-
-    @Override
-    public boolean isFeasible(Instance instance, ISolution solution) {
-        List<Integer> rest = new ArrayList<>();
-        //On ajoute tous les produits non pris dans la solution au "reste"
-        for (int i = 0; i < instance.getNumberOfProducts(); i++) {
-            if (!solution.take(i)) {
-                rest.add(instance.getWeights(i));
-            }
-        }
-        return knapsackRec(rest, rest.size(), instance.getCapacity()) == instance.getCapacity();
-    }
-
 
     /**
-     * Methode recursive
+     * Cette méthode indique si c'est possible d'avoir une autre solution avec les objets restantes
      *
-     * @param weights            liste des restes des prix qui va subir la récursivité
-     * @param nbRemainingProduct nombre de produit restant
-     * @param capacity           budget
-     * @return retourne la somme la plus proche du budget que peut former le reste des prix
+     * @param instance les objets disponibles
+     * @param solution la solution trouvée
+     * @return true : s'il existe une autre solution avec les objets restants
+     * false : sinon
      */
-    public int knapsackRec(List<Integer> weights, int nbRemainingProduct, int capacity) {
-        if (nbRemainingProduct <= 0) {
-            return 0;
-        } else if (weights.get(nbRemainingProduct - 1) > capacity) {
-            return knapsackRec(weights, nbRemainingProduct - 1, capacity);
-        } else {
-            return Math.max(knapsackRec(weights, nbRemainingProduct - 1, capacity),
-                    weights.get(nbRemainingProduct - 1) + knapsackRec(weights, nbRemainingProduct - 1, capacity - weights.get(nbRemainingProduct - 1)));
+    @Override
+    public boolean isFeasible(Instance instance, ISolution solution) {
+
+        /**
+         * pour chaque item non choisi dans la solution (retourne false)
+         * on les ajoute dans une liste des items restantes
+         */
+        List<Integer> remainingItems = new ArrayList<>();
+        for (int i = 0; i < instance.getNumberOfProducts(); i++) {
+            if (!solution.take(i)) {
+                remainingItems.add(instance.getWeights(i));
+            }
         }
+
+
+        int remainingNoOfProducts = remainingItems.size();
+        Instance remainingInstance = new InstanceMT(instance.getCapacity(), remainingNoOfProducts, remainingItems);
+
+        /**initialisation du nouveau capacité max des items restantes*/
+        int newSolCapacity = 0;
+
+        boolean[] newChosenItems = getSolution(remainingInstance).getChosenItems();
+        for (int i = 0; i < newChosenItems.length; i++) {
+            /**si l'item a l'indice i a ete choice (true) on ajoute son prix a newSolCapacity*/
+            if (newChosenItems[i]) {
+                newSolCapacity += remainingInstance.getWeights().get(i);
+            }
+        }
+
+        return newSolCapacity == instance.getCapacity();
     }
 }

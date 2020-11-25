@@ -58,8 +58,10 @@ public class MetaMerch {
 
             }
         }
-
-
         log.info(answer);
+
+        //to separate each test in log file
+        log.debug("\n\n");
+
     }
 }
