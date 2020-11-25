@@ -57,6 +57,8 @@ public class InstanceMT implements Instance {
         this.capacity = capacity;
         this.weights = weights;
 
+        Collections.sort(weights);
+        Collections.reverse(weights);
     }
 
     @Override
