@@ -11,7 +11,7 @@ import java.util.*;
 public class SolverE implements ISolver {
 
     private static final Logger log = LoggerFactory.getLogger(SolverE.class);
-
+    private List<Integer> localWeight;
 
     /**
      * Cherche toutes les solutions qui répondent au problème de sac
@@ -25,7 +25,7 @@ public class SolverE implements ISolver {
      */
 
 
-    public List<boolean[]> getSolution(List<boolean[]> solutions, boolean[] took, int primerSolution, List<Integer> weight, int capacity, int indice,boolean restart) {
+    public List<boolean[]> getSolution(List<boolean[]> solutions, boolean[] took, int primerSolution, List<Integer> weight, int capacity, int indice,boolean restart,List<List<Integer>> combination) {
         ////////// SI INSTANCE VIDE ////////////
         if (weight.isEmpty()) {                     // si il n'y a plus d'items
             return solutions;                       // on retourne les solutions actuelles
@@ -38,9 +38,10 @@ public class SolverE implements ISolver {
             soluce+= weight.get(e);                 // on ajoute les poids/prix de tous les objets de l'instance
             soluceBool[indice+e] =  true;           // on set à true à partir de indice (car on estime que l'on prend tout ce qui suit indice)
         }
-        int solve = solver(solutions, soluceBool,soluce, capacity); // on récupère 0, 1 ou 2 en fonction du solver
+        int solve = solver(solutions, soluceBool,soluce, capacity,combination); // on récupère 0, 1 ou 2 en fonction du solver
         if (solve == 0) {                           // si 0 alors c'est une nouvelle solution
             solutions.add(soluceBool);              // on l'ajoute à toutes les solutions
+            combination.add(convert(soluceBool));
             return solutions;                       // on retourne les solutions actuelles car ça ne sert à rien de continuer (il n'existe pas d'item "gratuit")
         }
 
@@ -56,10 +57,11 @@ public class SolverE implements ISolver {
         weight.remove(0);                        // on supprime ce même élément de tout les items car on va traiter toutes les possibilités avec
         List<Integer> instanceSecondaire = new ArrayList<>(weight); // on crée une autre instance de la taille de l'instance de base -1 car on a supprimé le premier élément
         int saveIndice = indice;                    // on mémorise l'indice actuel pour relancer à l'indice suivant
-        solve = solver(solutions,nouvelleCombinaisonBool, nouvelleCombinaison, capacity); // on test si l'ajout du premier élément est une solution
+        solve = solver(solutions,nouvelleCombinaisonBool, nouvelleCombinaison, capacity,combination); // on test si l'ajout du premier élément est une solution
         //////// AJOUT DU PREMIER ELEMENT SOLUTION ///////////
         if (solve == 0) {               // 0 signifie que c'est une solution
             solutions.add(nouvelleCombinaisonBool); // si oui on l'ajoute aux solutions
+            combination.add(convert(nouvelleCombinaisonBool));
         }
 
         //////// POSSIBILITE DE RAJOUTER DES ELEMENTS ///////////
@@ -74,11 +76,12 @@ public class SolverE implements ISolver {
                 saveIndice += 1;                // on incrémente l'indice
                 i=-1;                           // on décrémente l'indice de la boucle for pour ne manquer aucun éléments
 
-                solve = solver(solutions,combinaisonSecondaireBool, combinaisonSecondaire, capacity); // on récupère la réponse de solver (0,1 ou 2)
+                solve = solver(solutions,combinaisonSecondaireBool, combinaisonSecondaire, capacity, combination); // on récupère la réponse de solver (0,1 ou 2)
 
                 //////// UNE SOLUTION DE TAILLE 2 //////////
                 if (solve == 0) {               // c'est une solution
                     solutions.add(combinaisonSecondaireBool); // on l'ajoute
+                    combination.add(convert(combinaisonSecondaireBool));
                     if(!instanceSecondaire.isEmpty() &&  instanceSecondaire.get(0)==stockSecondaire) {
                         instanceSecondaire.remove(0);
                         saveIndice++;
@@ -96,7 +99,7 @@ public class SolverE implements ISolver {
                 }
                 /////// ON CHERCHE PLUS LOIN //////
                 List<Integer> newInstance = new ArrayList<>(instanceSecondaire);
-                getSolution(solutions, combinaisonSecondaireBool,combinaisonSecondaire,newInstance,capacity,saveIndice+1,false); // il y a encore de la capacité donc on continue avec la solution, accumulateur, instance actuelle et on va donc ajouter d'autres éléments (à partir de l'indice suivant)
+                getSolution(solutions, combinaisonSecondaireBool,combinaisonSecondaire,newInstance,capacity,saveIndice+1,false,combination); // il y a encore de la capacité donc on continue avec la solution, accumulateur, instance actuelle et on va donc ajouter d'autres éléments (à partir de l'indice suivant)
             }
         }
         if(!restart){
@@ -112,7 +115,7 @@ public class SolverE implements ISolver {
             }
         }
         //////// ON RECOMMENCE EN PARTANT DE L'ELEMENT SUIVANT /////////
-        return getSolution(solutions, took, 0, weight, capacity, indice + 1,true); // on recommence à partir de l'indice suivant car toutes les combinaisons possible avec le premier élément de l'instance on été testé
+        return getSolution(solutions, took, 0, weight, capacity, indice + 1,true,combination); // on recommence à partir de l'indice suivant car toutes les combinaisons possible avec le premier élément de l'instance on été testé
     }
 
 
@@ -128,15 +131,18 @@ public class SolverE implements ISolver {
      * 2 : capacité non atteinte
      */
 
-    private static int solver(List<boolean[]> solutions, boolean[] combination,int total, int capacity) {
+    private int solver(List<boolean[]> solutions, boolean[] combination, int total, int capacity, List<List<Integer>> combinationS) {
         ////// CAPACITE NON ATTEINTE /////
         if (capacity > total) {
             return 2;
         }
         ////// CAPACITE ATTEINTE /////
-        if (capacity == total) { // solution et elle n'est pas encore listée
-            for(boolean[] arr1 : solutions) {
-                if (Arrays.toString(arr1).equals(Arrays.toString(combination))) {
+        List<Integer> solutionsS = this.convert(combination);
+
+        if (capacity == total && !combinationS.contains(solutionsS)) { // solution et elle n'est pas encore listée
+
+            for (int i =0 ; i < solutions.size() ; i++ ){
+                if (Arrays.toString(solutions.get(i)).equals(Arrays.toString(combination)) && combinationS.get(i).containsAll(solutionsS)) {
                     return 1;
                 }
             }
@@ -156,13 +162,9 @@ public class SolverE implements ISolver {
         ArrayList<ISolution> solve = new ArrayList<>();
         List<boolean[]> solutions = new ArrayList<>();
         List<Integer> weight = new ArrayList<>(instance.getWeights());
-        boolean[] took = new boolean[instance.getNumberOfProducts()];
-        for(int i = 0 ; i< instance.getNumberOfProducts();i++){
-            took[i] = false ;
-        }
+        this.localWeight = instance.getWeights();
 
-        getSolution(solutions,took, 0, weight, instance.getCapacity(), 0,true);
-
+        getSolution(solutions,getEmpty(instance.getNumberOfProducts()), 0, weight, instance.getCapacity(), 0,true,new ArrayList<List<Integer>>());
 
 
 
@@ -174,27 +176,10 @@ public class SolverE implements ISolver {
         return solve.iterator();
     }
 
-    /**
-     * Methode recursive
-     *
-     * @param weights            liste des restes des prix qui va subir la récursivité
-     * @param nbRemainingProduct nombre de produit restant
-     * @param capacity           budget
-     * @return retourne la somme la plus proche du budget que peut former le reste des prix
-     */
-    public int knapsackRec(List<Integer> weights, int nbRemainingProduct, int capacity) {
-        if (nbRemainingProduct <= 0) {
-            return 0;
-        } else if (weights.get(nbRemainingProduct - 1) > capacity) {
-            return knapsackRec(weights, nbRemainingProduct - 1, capacity);
-        } else {
-            return Math.max(knapsackRec(weights, nbRemainingProduct - 1, capacity),
-                    weights.get(nbRemainingProduct - 1) + knapsackRec(weights, nbRemainingProduct - 1, capacity - weights.get(nbRemainingProduct - 1)));
-        }
-    }
 
     /**
-     * cette méthode calcule la possibilité d'avoir une nouvelle solution avec les produits restants
+     * cette méthode calcule la possibilité d'avoir des nouvelles solutions avec les produits restants
+     * elle enumerent toutes les autre possiblité
      *
      * @param instance l'ensemble des données
      * @param solution la solution qu'on a choisi (produits pris)
@@ -202,15 +187,33 @@ public class SolverE implements ISolver {
      */
     @Override
     public boolean isFeasible(Instance instance, ISolution solution) {
-        List<Integer> rest = new ArrayList<>();
+        List<Integer> rest =  convert(solution.getChosenItems());
         //On ajoute tous les produits non pris dans la solution au "reste"
-        for (int i = 0; i < instance.getNumberOfProducts(); i++) {
-            if (!solution.take(i)) {
-                rest.add(instance.getWeights(i));
-            }
-        }
-        return knapsackRec(rest, rest.size(), instance.getCapacity()) == instance.getCapacity();
+
+        return ( getSolution(new ArrayList<boolean[]>(),getEmpty(instance.getNumberOfProducts()),0,rest,instance.getCapacity(),0,true,new ArrayList<List<Integer>>()).size() > 0);
     }
 
+
+
+    private boolean[] getEmpty(int numberOfProducts){
+        boolean[] took = new boolean[numberOfProducts];
+        for(int i = 0 ; i < numberOfProducts;i++){
+            took[i] = false ;
+        }
+        return took;
+    }
+
+    private List<Integer> convert(boolean[] tab)
+    {
+        List<Integer> list = new ArrayList<>();
+        if (tab.length > 0) {
+            for (int i = 0; i < tab.length; i++) {
+                if (tab[i] == true) list.add(this.localWeight.get(i));
+
+            }
+        }
+        return list;
+
+    }
 
 }
