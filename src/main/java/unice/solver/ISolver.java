@@ -9,7 +9,5 @@ public interface ISolver {
 
     Iterator<ISolution> getIterator(Instance instance);
 
-    default boolean isFeasible(Instance instance, ISolution solution){
-        return false;
-    };
+    boolean isFeasible(Instance instance, ISolution solution);
 }
