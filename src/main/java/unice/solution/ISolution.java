@@ -15,4 +15,9 @@ public interface ISolution {
 
     boolean[] getChosenItems();
 
+    int countTrue();
+
+    List<Integer>  getSolution(List<Integer> weigth);
+
+
 }

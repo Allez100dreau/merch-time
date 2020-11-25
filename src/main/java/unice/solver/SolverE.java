@@ -139,11 +139,12 @@ public class SolverE implements ISolver {
         }
         getSolution(solutions,took, 0, weight, instance.getCapacity(), 0);
 
-        //log.debug("Les solutions possible : {}", solutions);
 
         for (boolean[] solution : solutions) {
             ISolution solutionS = new SolutionMT(solution);
             solve.add(solutionS);
+            log.info("Les solutions possible : {}", solutionS.getSolution(instance.getWeights()));
+
         }
         return solve.iterator();
     }
