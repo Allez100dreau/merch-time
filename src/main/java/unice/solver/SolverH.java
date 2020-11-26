@@ -17,27 +17,19 @@ public class SolverH implements ISolver {
      * @return une solution au problème (les objets mis dans le sac à dos )
      */
     public ISolution solve(Instance I) {
-        ArrayList<Integer> items = new ArrayList<>();
-        for (int i = 0; i < I.getNumberOfProducts(); i++) items.add(I.getWeights(i));
-
         boolean[] chosenItems = new boolean[I.getNumberOfProducts()] ;
 
         int knapSackWeight = 0;
         int chosenItem;
 
-        for (int i = 0, stop = items.size(); i < stop; i++) {
-            chosenItem = items.get(0); // We choose the heaviest item
+        for (int i = 0, stop = I.getNumberOfProducts(); i < stop; i++) {
+            chosenItem = I.getWeights(i); // We choose the heaviest item
             if (knapSackWeight == I.getCapacity()) { // if the knapsack is full we stop
                 break;
             } else if (chosenItem + knapSackWeight <= I.getCapacity()) { // If the item fits the backpack
                 // Put it in the backpack
-                items.remove(0);
-
                 chosenItems[i] = true ; //add the chosen item to the list of chosen items
-
                 knapSackWeight += chosenItem;
-            } else { // Else, don't use it
-                items.remove(0);
             }
         }
         return new SolutionMT(chosenItems);
