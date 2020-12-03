@@ -28,21 +28,23 @@ public class SolutionMT implements ISolution {
     }
 
     @Override
-    public int countTrue(){
-        int i = 0 ;
-        for (Boolean b: chosenItems) {
-            i++;
+    public int countTrue() {
+        int count = 0;
+        for (Boolean b : chosenItems) {
+            if (b) {
+                count++;
+            }
         }
-        return i;
+        return count;
     }
+
     @Override
-    public List<Integer> getSolution(List<Integer> weigth){
-         List<Integer> s  = new ArrayList<>();
-        for(int i = 0 ; i < weigth.size() ; i++)
-        {
-            if (chosenItems[i] == true) s.add(weigth.get(i));
+    public List<Integer> getSolution(List<Integer> weigth) {
+        List<Integer> solution = new ArrayList<>();
+        for (int i = 0; i < weigth.size(); i++) {
+            if (chosenItems[i]) solution.add(weigth.get(i));
         }
-        return s ;
+        return solution;
 
     }
 }
