@@ -4,13 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import unice.instance.Instance;
 import unice.instance.InstanceMT;
+import unice.parser.ConfigParser;
 import unice.solution.ISolution;
 import unice.solution.ISolutionChecker;
 import unice.solution.SolutionChecker;
 import unice.solver.ISolver;
-import unice.solver.SolverD;
-import unice.solver.SolverE;
-import unice.solver.SolverH;
 
 import java.util.Iterator;
 
@@ -24,21 +22,15 @@ public class MetaMerch {
     }
 
     /**
-     * Ici on decide quelle solution on veut adopter
+     * Ici on obtient le solver depuis le fichier config.properties
      *
-     * @return la solution choisit
+     * @return le solveur choisit
      */
-    private static ISolver makeSolver() {
-        return new SolverE();
-        //return new SolverZ();
-        //return new SolverD();
-        //return new SolverH();
+    private static ISolver makeSolver() throws Exception {
+        return new ConfigParser().getSolver();
     }
 
-    private MetaMerch() {
-    }
-
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
         final Instance instance = parseInstance();
         final ISolver solver = makeSolver();
