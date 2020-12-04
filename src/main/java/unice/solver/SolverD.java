@@ -3,16 +3,13 @@ package unice.solver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import unice.instance.Instance;
-import unice.instance.InstanceMT;
 import unice.solution.ISolution;
 import unice.solution.SolutionMT;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class SolverD implements ISolver {
-
+public class SolverD extends Common implements ISolver {
     private static final Logger log = LoggerFactory.getLogger(SolverD.class);
 
     /**
@@ -36,23 +33,20 @@ public class SolverD implements ISolver {
         int[][] matrix = new int[numberOfItems + 1][capacity + 1];
 
         for (int item = 1; item <= numberOfItems; item++) {
-            for (int itemPrice = 0; itemPrice <= capacity; itemPrice++) {
+            for (int itemWeight = 0; itemWeight <= capacity; itemWeight++) {
                 int previousItem = weights.get(item - 1);
 
                 /** si on peut pas acheter un nouveau item,
                  *  le prix sera celui de l'indice precedent dans la matrix */
-                matrix[item][itemPrice] = matrix[item - 1][itemPrice];
+                matrix[item][itemWeight] = matrix[item - 1][itemWeight];
 
                 /** si le prix de l'item actuel est > ou = celui precedent
                  * et si on peut l'ajouter sans aller au dela de la limite alors on met a jour le prix par apport a l'index */
-                if ((itemPrice >= previousItem) && (matrix[item - 1][itemPrice - previousItem] + previousItem) > matrix[item][itemPrice]) {
-                    matrix[item][itemPrice] = matrix[item - 1][itemPrice - previousItem] + previousItem;
+                if ((itemWeight >= previousItem) && (matrix[item - 1][itemWeight - previousItem] + previousItem) > matrix[item][itemWeight]) {
+                    matrix[item][itemWeight] = matrix[item - 1][itemWeight - previousItem] + previousItem;
                 }
             }
         }
-
-        /** list chosen used for log only */
-        List<Integer> chosen = new ArrayList<>();
 
         boolean[] itemsChosen = new boolean[numberOfItems];
 
@@ -65,21 +59,20 @@ public class SolverD implements ISolver {
 
             if (matrix[numberOfItems][capacity] != matrix[numberOfItems - 1][capacity]) {
                 itemsChosen[numberOfItems - 1] = true;
-
-                /** list chosen used for log only */
-                chosen.add(weights.get(numberOfItems - 1));
-
                 capacity = capacity - weights.get(numberOfItems - 1);
             }
             numberOfItems--;
         }
 
-        /** used for log only: log items only if remaining capacity is 0 i.e bag has been filled completely */
-         if (capacity == 0) {
-            log.debug("Items chosen : {}", chosen);
+        if (capacity == 0) {
+            /** log and return the solution */
+            SolutionMT solutionMT = new SolutionMT(itemsChosen);
+            log.debug("Items chosen : {}", solutionMT.getSolution(weights));
+            return solutionMT;
         }
 
-        return new SolutionMT(itemsChosen);
+        /** pas de solution possible */
+        return null;
     }
 
     /**
@@ -88,9 +81,7 @@ public class SolverD implements ISolver {
      */
     @Override
     public Iterator<ISolution> getIterator(Instance instance) {
-        ArrayList<ISolution> solutions = new ArrayList<>();
-        solutions.add(getSolution(instance));
-        return solutions.iterator();
+        return super.getSolutionIterator(getSolution(instance));
     }
 
     /**
@@ -103,33 +94,7 @@ public class SolverD implements ISolver {
      */
     @Override
     public boolean isFeasible(Instance instance, ISolution solution) {
-
-        /**
-         * pour chaque item non choisi dans la solution (retourne false)
-         * on les ajoute dans une liste des items restantes
-         */
-        List<Integer> remainingItems = new ArrayList<>();
-        for (int i = 0; i < instance.getNumberOfProducts(); i++) {
-            if (!solution.take(i)) {
-                remainingItems.add(instance.getWeights(i));
-            }
-        }
-
-
-        int remainingNoOfProducts = remainingItems.size();
-        Instance remainingInstance = new InstanceMT(instance.getCapacity(), remainingNoOfProducts, remainingItems);
-
-        /**initialisation du nouveau capacité max des items restantes*/
-        int newSolCapacity = 0;
-
-        boolean[] newChosenItems = getSolution(remainingInstance).getChosenItems();
-        for (int i = 0; i < newChosenItems.length; i++) {
-            /**si l'item a l'indice i a ete choice (true) on ajoute son prix a newSolCapacity*/
-            if (newChosenItems[i]) {
-                newSolCapacity += remainingInstance.getWeights().get(i);
-            }
-        }
-
-        return newSolCapacity == instance.getCapacity();
+        /**return true if solution not null else return false*/
+        return getSolution(super.getRemainingItems(instance, solution)) != null;
     }
 }
