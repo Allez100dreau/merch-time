@@ -12,8 +12,12 @@ public class ConfigParser {
 
     private static final Logger log = LoggerFactory.getLogger(ConfigParser.class);
 
+    /**
+     * loads the application.properties file and reads the solver, then return the ISolver accordingly
+     * @return ISolver
+     */
     public ISolver getSolver() throws Exception {
-        String propertyFile = "config.properties";
+        String propertyFile = "application.properties";
         Properties prop = new Properties();
 
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream(propertyFile);
@@ -25,7 +29,7 @@ public class ConfigParser {
             throw new FileNotFoundException("Property file '" + propertyFile + "' not found in the classpath");
         }
 
-        switch (prop.getProperty("algo.choisi")) {
+        switch (prop.getProperty("solveur")) {
             case "D":
                 return new SolverD();
 
@@ -35,12 +39,9 @@ public class ConfigParser {
             case "H":
                 return new SolverH();
 
-            case "Z":
-                return new SolverZ();
-
             default:
-                log.error("Algo {} choisi n'éxiste pas", prop.getProperty("algo.choisi"));
-                throw new Exception("Algo choisi n'éxiste pas");
+                log.error("Le solveur {} n'existe pas", prop.getProperty("solveur"));
+                throw new Exception("Le solveur choisit n'existe pas");
         }
     }
 }

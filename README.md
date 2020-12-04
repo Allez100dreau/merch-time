@@ -14,8 +14,8 @@ Le [cours](https://www.i3s.unice.fr/master-info/assets/s1/graphes-prog-dyn/merch
 Référencez les commits avec les # des issues, indiquez qui a travaillé sur quoi dans les commentaires.
 
 ### Choix du solveur :
-Le choix de l'algo à être utiliser pour la solution doit être définit dans le fichier [config.properties](src/main/resources/config.properties). \
-Exemple: Pour exécuter le projet avec le solveur D on devra le définir comme suite : `algo.choisi=D`
+Le choix du solveur à être utiliser pour la solution doit être définit dans le fichier [application.properties](src/main/resources/application.properties). \
+Exemple: Pour exécuter le projet avec le solveur D on devra le définir comme suite : `solveur=D`
 
 
 ### Niveaux des logs :

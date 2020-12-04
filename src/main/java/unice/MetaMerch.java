@@ -22,8 +22,8 @@ public class MetaMerch {
     }
 
     /**
-     * Ici on obtient le solver depuis le fichier config.properties
-     *
+     * Ici on obtient le solver depuis le fichier application.properties
+     * changer le solveur dans le fichier application.properties qui se trouve dans resources
      * @return le solveur choisit
      */
     private static ISolver makeSolver() throws Exception {
@@ -54,6 +54,5 @@ public class MetaMerch {
 
         //to separate each test in log file
         log.debug("\n\n");
-
     }
 }
