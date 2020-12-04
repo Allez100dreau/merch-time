@@ -25,13 +25,14 @@ public class TestSolverD {
         List<Integer> w = Arrays.asList(weights);
         List<Integer> weight = new ArrayList<>(w);
         instanceMT = new InstanceMT(21, 6, weight);
-        boolean[] sol = {false, true, false, true, false, false};
+        boolean[] sol = {true, false, true, false, false, false};
         solution = new SolutionMT(sol);
         List<ISolution> listeSol = new ArrayList<>();
         listeSol.add(solution);
-        assertEquals(Arrays.toString(solverD.getIterator(instanceMT).next().getChosenItems()), Arrays.toString(listeSol.iterator().next().getChosenItems()));
+
         assertEquals(Arrays.toString(solverD.getIterator(instanceMT).next().getChosenItems()), Arrays.toString(sol));
-    }
+        assertEquals(Arrays.toString(solverD.getIterator(instanceMT).next().getChosenItems()), Arrays.toString(listeSol.iterator().next().getChosenItems()));
+        }
 
     @Test
     public void getIteratorTest2() {
@@ -40,7 +41,7 @@ public class TestSolverD {
         List<Integer> w3 = Arrays.asList(weights3);
         List<Integer> weight3 = new ArrayList<>(w3);
         instanceMT = new InstanceMT(20, 4, weight3);
-        boolean[] sol2 = {true, true, false, false};
+        boolean[] sol2 = {true, false, false, true};
         assertEquals(Arrays.toString(solverD.getIterator(instanceMT).next().getChosenItems()), Arrays.toString(sol2));
     }
 
@@ -73,14 +74,13 @@ public class TestSolverD {
     @Test
     public void isFeasibleTest3() {
         solverD = new SolverD();
-        boolean[] s2 = {true, true, true, true, true, false, false, false, false, false, false};
         Integer[] w1 = {6, 1, 1, 1, 1, 2, 1, 7, 5, 2, 1};
         List<Integer> weights = Arrays.asList(w1);
 
         instanceMT = new InstanceMT(10, 11, weights);
+        boolean[] s2 = {true, true, true, true, true, true, true, true, false, false, false};
         solution = new SolutionMT(s2);
-
-        assertTrue(solverD.isFeasible(instanceMT, solution));
+        assertFalse(solverD.isFeasible(instanceMT, solution));
     }
 
     @Test
