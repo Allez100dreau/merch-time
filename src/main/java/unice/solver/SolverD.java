@@ -13,11 +13,11 @@ public class SolverD extends Common implements ISolver {
     private static final Logger log = LoggerFactory.getLogger(SolverD.class);
 
     /**
-     * Construit la matrice pour toutes les prix possible
-     * et renvoie une solution ISolution
+     * Construit la matrice pour toutes les poids (weights) possible
+     * et renvoie une solution ISolution s'il en existe
      *
      * @param instance les objets disponibles
-     * @return une solution au problème (les objets mis dans le sac à dos )
+     * @return une solution au problème (les objets choisit)
      */
     private ISolution getSolution(Instance instance) {
         int capacity = instance.getCapacity();
@@ -25,7 +25,7 @@ public class SolverD extends Common implements ISolver {
         List<Integer> weights = instance.getWeights();
 
         /**
-         * construction de la matrix de tout les prix possible
+         * construction de la matrix de tout les possibilités
          * Reference : https://dyclassroom.com/dynamic-programming/0-1-knapsack-problem#:~:text=Time%20complexity%20of%200%201,is%20the%20capacity%20of%20knapsack.
          *
          **/
@@ -36,12 +36,12 @@ public class SolverD extends Common implements ISolver {
             for (int itemWeight = 0; itemWeight <= capacity; itemWeight++) {
                 int previousItem = weights.get(item - 1);
 
-                /** si on peut pas acheter un nouveau item,
-                 *  le prix sera celui de l'indice precedent dans la matrix */
+                /** si on peut pas prendre un nouveau item,
+                 *  le weight sera pareil comme l'indice precedent de la matrix */
                 matrix[item][itemWeight] = matrix[item - 1][itemWeight];
 
-                /** si le prix de l'item actuel est > ou = celui precedent
-                 * et si on peut l'ajouter sans aller au dela de la limite alors on met a jour le prix par apport a l'index */
+                /** si le weight de l'item actuel est > ou = celui precedent
+                 * et si on peut le prendre sans aller au dela de la capacité alors on met a jour le weight par apport a l'index */
                 if ((itemWeight >= previousItem) && (matrix[item - 1][itemWeight - previousItem] + previousItem) > matrix[item][itemWeight]) {
                     matrix[item][itemWeight] = matrix[item - 1][itemWeight - previousItem] + previousItem;
                 }
@@ -52,8 +52,8 @@ public class SolverD extends Common implements ISolver {
 
         /** on boucle sur toutes les items
          * on initialiser un tableau de boolean itemsChosen a false
-         * et si le prix possible a payer d'un item i est different que celui precedent (i-1)
-         * on a donc choisi cette produit et on le met true dans le tableau et enlève la le prix du budget */
+         * et si le weight a un index i est different que celui precedent (i-1)
+         * on a donc choisi une produit a cette index et on le met true dans le tableau et on enlève son weight du capacité */
         while (numberOfItems != 0) {
             itemsChosen[numberOfItems - 1] = false;
 
