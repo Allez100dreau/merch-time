@@ -4,15 +4,15 @@ import unice.instance.InstanceMT;
 import unice.solution.ISolution;
 import unice.solution.SolutionMT;
 import unice.solver.SolverE;
-
 import java.util.*;
-
 import static org.junit.Assert.*;
-/*
+
+
 public class TestSolverE {
 
     SolverE solverE;
 
+    /*
     @Test
     public void getSolutionTest()
     {
@@ -26,11 +26,11 @@ public class TestSolverE {
         Collections.sort(weight);
         Collections.reverse(weight);
         int capacity = 10;
-        List<ISolution> newSolution = solverE.getSolution(new ArrayList<>(), solverE.getEmpty(weight.size()),0,weight,capacity,0,true);
-        boolean contain = false ;
-        for (ISolution smt : newSolution) {
+        List<boolean[]> newSolution = solverE.getSolution(new ArrayList<>(), solverE.getEmpty(weight.size()),0,weight,capacity,0,true, new ArrayList<>());
+        boolean contain = false;
+        for (boolean[] smt : newSolution) {
 
-            if (Arrays.toString(smt.getChosenItems()).equals(Arrays.toString(s)))
+            if (Arrays.toString(smt).equals(Arrays.toString(s)))
             {
                 contain = true;
             }
@@ -48,13 +48,13 @@ public class TestSolverE {
         Collections.reverse(weight2);
 
         boolean[] s2 = {true, false, true, false, false, false};
-        newSolution = solverE.getSolution(new ArrayList<>(), solverE.getEmpty(weight2.size()),0,weight2,21,0,true);
+        newSolution = solverE.getSolution(new ArrayList<>(), solverE.getEmpty(weight2.size()),0,weight2,21,0,true, new ArrayList<>());
         assertEquals( 1,newSolution.size());
 
         contain = false ;
-        for (ISolution smt : newSolution) {
+        for (boolean[] smt : newSolution) {
 
-            if (Arrays.toString(smt.getChosenItems()).equals(Arrays.toString(s2)))
+            if (Arrays.toString(smt).equals(Arrays.toString(s2)))
             {
                 contain = true;
             }
@@ -71,12 +71,13 @@ public class TestSolverE {
 
         capacity = 20;
 
-        newSolution = solverE.getSolution(new ArrayList<>(), solverE.getEmpty(weight3.size()),0,weight3,capacity,0,true);
+        newSolution = solverE.getSolution(new ArrayList<>(), solverE.getEmpty(weight3.size()),0,weight3,capacity,0,true, new ArrayList<>());
 
         assertEquals( 0,newSolution.size()); //logiquement 1
 
 
     }
+    */
 
     @Test
     public void getIteratorTest() {
@@ -95,9 +96,9 @@ public class TestSolverE {
         // Si c'est la meme solution l'algo ne retourne qu'une seul
         Iterator<ISolution> iterator = solverE.getIterator(instanceMT);
         assertEquals(Arrays.toString(iterator.next().getChosenItems()), Arrays.toString(listeSol.iterator().next().getChosenItems()));
-        assertEquals(iterator.hasNext(), false);
-    }
-/*
+        assertFalse(iterator.hasNext());
+
+
         //test 3
         solverE = new SolverE();
 
@@ -109,28 +110,12 @@ public class TestSolverE {
 
         boolean[] sol2 = {true, false, false, true}; // 14 + 6
         assertEquals(Arrays.toString(iterator.next().getChosenItems()), Arrays.toString(sol2));
-        assertEquals(iterator.hasNext(),false);
+        assertFalse(iterator.hasNext());
 
     }
 
-    @Test
-    public void knapsackRecTest()
-    {
-        // possible d'avoir une somme de 21 à partir des nombre suivant
-        solverE = new SolverE();
-        Integer[] weights = {7,13,8,8};
-        List<Integer> w = Arrays.asList(weights);
-        assertEquals( 21 , solverE.knapsackRec(w,w.size(),21));
 
-
-        // non possible d'avoir une somme de 20 à partir des nombre suivant
-        solverE = new SolverE();
-        Integer[] weights2 = {6, 14 ,10 ,7};
-        w = Arrays.asList(weights2);
-        assertEquals( 20 , solverE.knapsackRec(w,w.size(),20) );
-    }
-
-
+/*
     @Test
     public void isFeasibleTest()
     {
