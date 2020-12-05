@@ -75,6 +75,7 @@ public class SolverD extends Common implements ISolver {
         return null;
     }
 
+
     /**
      * @param instance les objets disponibles
      * @return un Iterator sur les objets d'une solution trouver
