@@ -4,8 +4,8 @@ Le [cours](https://www.i3s.unice.fr/master-info/assets/s1/graphes-prog-dyn/merch
 
 ### Planning :
 **Séance** : Mercredi 25 Novembre à 17h  
-**Rendu** : Dimanche 6 Décembre à 23:59  
-**Debrief** : Mercredi 9 Décembre à 17h  
+**Rendu** : Vendredi 18 Décembre à 23:59  
+**Debrief** : Mercredi 9 Décembre à 17h (à changer?) 
 
 ### Notation du projet :
 - 50% Collectif
