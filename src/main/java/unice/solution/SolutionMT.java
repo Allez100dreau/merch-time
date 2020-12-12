@@ -39,10 +39,10 @@ public class SolutionMT implements ISolution {
     }
 
     @Override
-    public List<Integer> getSolution(List<Integer> weigth) {
+    public List<Integer> getSolution(List<Integer> weight) {
         List<Integer> solution = new ArrayList<>();
-        for (int i = 0; i < weigth.size(); i++) {
-            if (chosenItems[i]) solution.add(weigth.get(i));
+        for (int i = 0; i < weight.size(); i++) {
+            if (chosenItems[i]) solution.add(weight.get(i));
         }
         return solution;
 

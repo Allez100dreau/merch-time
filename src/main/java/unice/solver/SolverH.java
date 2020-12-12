@@ -10,7 +10,7 @@ import java.util.*;
 /**
  * Cette classe représente une méthode approchée pour le problème de décision H
  */
-public class SolverH implements ISolver {
+public class SolverH extends Common implements ISolver {
     /**
      * Méthode itérative gloutonne pour la résolution du problème Merch time
      * @param I les objets disponibles
@@ -41,11 +41,7 @@ public class SolverH implements ISolver {
      */
     @Override
     public Iterator<ISolution> getIterator(Instance instance) {
-        ArrayList<ISolution> solutions = new ArrayList<>();
-
-        solutions.add(solve(instance));
-
-        return solutions.iterator();
+        return super.getSolutionIterator(solve(instance));
     }
 
     /**
@@ -57,22 +53,6 @@ public class SolverH implements ISolver {
      */
     @Override
     public boolean isFeasible(Instance instance, ISolution solution) {
-        List<Integer> remainingItems = new ArrayList<>();
-        for (int i = 0; i < instance.getNumberOfProducts(); i++) {
-            if (!solution.take(i)) {
-                remainingItems.add(instance.getWeights(i));
-            }
-        }
-        int remainingNumberOfProducts = remainingItems.size() ;
-        Instance remainingInstance = new InstanceMT(instance.getCapacity() , remainingNumberOfProducts , remainingItems ) ;
-
-        int capacity2 = 0 ; //capacity of the chosen Items from the remaining items
-        boolean[] chosenItemsFromRemainingItems = solve(remainingInstance).getChosenItems() ;
-        for (int i = 0; i < chosenItemsFromRemainingItems.length; i++) {
-            if (chosenItemsFromRemainingItems[i]){ //if the item is taken we add it's weight to the capacity
-                capacity2 += remainingInstance.getWeights() .get(i) ;
-            }
-        }
-        return capacity2 == instance.getCapacity() ;
+        return solve(super.getRemainingItems(instance, solution)).getSolution(instance.getWeights()).size() > 0 ;
     }
 }
