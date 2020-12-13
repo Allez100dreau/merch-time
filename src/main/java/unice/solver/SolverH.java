@@ -23,22 +23,27 @@ public class SolverH extends Common implements ISolver {
         int chosenItem;
 
         for (int i = 0 ; i < I.getNumberOfProducts(); i++) {
+
             chosenItem = I.getWeights(i); // We choose the heaviest item
+
             if (chosenItem + knapSackWeight <= I.getCapacity()) { // If the item fits the backpack
                 // Put it in the backpack
-                chosenItems[i] = true; //add the chosen item to the list of chosen items
+                chosenItems[i] = true; // Add the chosen item to the list of chosen items
                 knapSackWeight += chosenItem;
-            }else if (knapSackWeight == I.getCapacity()) { // if the knapsack is full we stop
-                break;
+
+                // If the backpack if full, we have our solution !
+                if (knapSackWeight == I.getCapacity()) return new SolutionMT(chosenItems);
             }
         }
-        return new SolutionMT(chosenItems);
+
+        // If we couldn't return a solution, then there is none !
+        return null;
     }
 
 
     /**
      * @param instance les objets disponibles
-     * @return un Iterator sur les objets d'une solution trouver
+     * @return un Iterator sur la solution trouvée.
      */
     @Override
     public Iterator<ISolution> getIterator(Instance instance) {
@@ -46,7 +51,7 @@ public class SolverH extends Common implements ISolver {
     }
 
     /**
-     * Cette méthode indique si c'est possible d'avoir une nouvelle solution avec les objets restants
+     * Cette méthode indique s'il est possible d'avoir une nouvelle solution avec les objets restants
      * @param instance les objets disponibles
      * @param solution la solution trouvée
      * @return true : s'il existe une autre solution avec les objets restants
