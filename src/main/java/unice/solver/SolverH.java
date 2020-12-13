@@ -59,6 +59,6 @@ public class SolverH extends Common implements ISolver {
      */
     @Override
     public boolean isFeasible(Instance instance, ISolution solution) {
-        return solve(super.getRemainingItems(instance, solution)).getSolution(instance.getWeights()).size() > 0 ;
+        return solve(super.getRemainingItems(instance, solution)) != null;
     }
 }
