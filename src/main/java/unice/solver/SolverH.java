@@ -1,7 +1,6 @@
 package unice.solver;
 
 import unice.instance.Instance;
-import unice.instance.InstanceMT;
 import unice.solution.ISolution;
 import unice.solution.SolutionMT;
 
@@ -58,7 +57,7 @@ public class SolverH extends Common implements ISolver {
      *         false : sinon
      */
     @Override
-    public boolean isFeasible(Instance instance, ISolution solution) {
-        return solve(super.getRemainingItems(instance, solution)) != null;
+    public Optional<ISolution> isFeasible(Instance instance, ISolution solution) {
+        return Optional.ofNullable(solve(super.getRemainingItems(instance, solution)));
     }
 }

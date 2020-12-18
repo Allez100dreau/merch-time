@@ -8,6 +8,7 @@ import unice.solution.SolutionMT;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 public class SolverD extends Common implements ISolver {
     private static final Logger log = LoggerFactory.getLogger(SolverD.class);
@@ -94,8 +95,8 @@ public class SolverD extends Common implements ISolver {
      * false : sinon
      */
     @Override
-    public boolean isFeasible(Instance instance, ISolution solution) {
+    public Optional<ISolution> isFeasible(Instance instance, ISolution solution) {
         /**return true if solution not null else return false*/
-        return getSolution(super.getRemainingItems(instance, solution)) != null;
+        return Optional.ofNullable(getSolution(super.getRemainingItems(instance, solution)));
     }
 }

@@ -11,6 +11,7 @@ import unice.solution.SolutionChecker;
 import unice.solver.ISolver;
 
 import java.util.Iterator;
+import java.util.Optional;
 
 public class MetaMerch {
 
@@ -44,10 +45,16 @@ public class MetaMerch {
 
             solutionChecker.checkValidity(instance, solution);
 
+            Optional<ISolution> bobSolution = solver.isFeasible(instance, solution);
 
-            if (!solver.isFeasible(instance, solution)) {
+            if (!bobSolution.isPresent()) {
                 answer = "POSSIBLE";
-
+            }
+            else {
+                 ISolution bobSolutionPresent = bobSolution.get();
+                 if (!solutionChecker.checkValidity(instance, bobSolutionPresent)) {
+                     answer = "POSSIBLE";
+                 }
             }
         }
         log.info(answer);

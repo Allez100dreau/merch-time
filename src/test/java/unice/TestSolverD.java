@@ -55,7 +55,7 @@ public class TestSolverD {
         instanceMT = new InstanceMT(21, 6, weights);
         solution = new SolutionMT(sol);
 
-        assertTrue(solverD.isFeasible(instanceMT, solution));
+        assertTrue(solverD.isFeasible(instanceMT, solution).isPresent());
     }
 
     @Test
@@ -68,7 +68,7 @@ public class TestSolverD {
         instanceMT = new InstanceMT(10, 11, weights);
         solution = new SolutionMT(s1);
 
-        assertFalse(solverD.isFeasible(instanceMT, solution));
+        assertFalse(solverD.isFeasible(instanceMT, solution).isPresent());
     }
 
     @Test
@@ -80,7 +80,7 @@ public class TestSolverD {
         instanceMT = new InstanceMT(10, 11, weights);
         boolean[] s2 = {true, true, true, true, true, true, true, true, false, false, false};
         solution = new SolutionMT(s2);
-        assertFalse(solverD.isFeasible(instanceMT, solution));
+        assertFalse(solverD.isFeasible(instanceMT, solution).isPresent());
     }
 
     @Test
@@ -93,6 +93,6 @@ public class TestSolverD {
         instanceMT = new InstanceMT(20, 4, weights2);
         solution = new SolutionMT(s4);
 
-        assertFalse(solverD.isFeasible(instanceMT, solution));
+        assertFalse(solverD.isFeasible(instanceMT, solution).isPresent());
     }
 }

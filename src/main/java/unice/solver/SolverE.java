@@ -186,11 +186,17 @@ public class SolverE implements ISolver {
      * @return l'existence d'une autre solution avec le produit restant
      */
     @Override
-    public boolean isFeasible(Instance instance, ISolution solution) {
+    public Optional<ISolution> isFeasible(Instance instance, ISolution solution) {
         List<Integer> rest = convert(solution.getChosenItems());
         //On ajoute tous les produits non pris dans la solution au "reste"
 
-        return ( getSolution(new ArrayList<>(),getEmpty(instance.getNumberOfProducts()),0,rest,instance.getCapacity(),0,true,new ArrayList<>()).size() > 0);
+        List<boolean[]> solutions = new ArrayList<>();
+
+        getSolution(solutions,getEmpty(instance.getNumberOfProducts()),0,rest,instance.getCapacity(),0,true,new ArrayList<>());
+
+        ISolution firstSolution = new SolutionMT(solutions.get(0));
+
+        return Optional.of(firstSolution);
     }
 
 
