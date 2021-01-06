@@ -18,9 +18,11 @@ public class SolutionChecker implements ISolutionChecker {
     @Override
     public boolean checkValidity(Instance instance, ISolution solution) {
 
-        assert checkSolution(instance, solution) : "Invalid solution";
-
-        return true;
+        if(checkSolution(instance, solution)){
+            return true;
+        }else{
+            return false;
+        }
     }
 
 

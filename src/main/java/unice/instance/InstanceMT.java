@@ -30,7 +30,7 @@ public class InstanceMT implements Instance {
 
         if(isParsing)
         {
-            parser.parseFile("input7.txt");
+            parser.parseFile("input21.txt");
            // parser.parseAllFiles();
             capacity = parser.getCapacity();
             numberOfProducts = parser.getNumberOfProducts();
