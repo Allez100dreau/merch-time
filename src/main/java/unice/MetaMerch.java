@@ -43,7 +43,12 @@ public class MetaMerch {
         while (iterator.hasNext()) {
             ISolution solution = iterator.next();
 
-            solutionChecker.checkValidity(instance, solution);
+            if(!solutionChecker.checkValidity(instance, solution)){
+                answer = "ERREUR";
+                log.info(answer);
+                log.debug("\n\n");
+                continue;
+            }
 
             Optional<ISolution> bobSolution = solver.isFeasible(instance, solution);
 
