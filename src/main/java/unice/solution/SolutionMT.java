@@ -1,15 +1,23 @@
 package unice.solution;
 
 
+import unice.instance.Instance;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class SolutionMT implements ISolution {
 
     private final boolean[] chosenItems;
+    private Instance instance;
 
     public SolutionMT(boolean[] chosenItems) {
         this.chosenItems = chosenItems;
+    }
+
+    public SolutionMT(boolean[] chosenItems, Instance instance) {
+        this.chosenItems = chosenItems;
+        this.instance = instance;
     }
 
     @Override
@@ -17,9 +25,14 @@ public class SolutionMT implements ISolution {
         return this.chosenItems.length;
     }
 
-    @Override
+
     public boolean take(int i) {
         return this.chosenItems[i];
+    }
+
+    @Override
+    public Instance getInstance() {
+        return instance;
     }
 
     @Override

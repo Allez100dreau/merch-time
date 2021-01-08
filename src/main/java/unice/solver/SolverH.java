@@ -12,26 +12,26 @@ import java.util.*;
 public class SolverH extends Common implements ISolver {
     /**
      * Méthode itérative gloutonne pour la résolution du problème Merch time
-     * @param I les objets disponibles
+     * @param instance les objets disponibles
      * @return une solution au problème (les objets mis dans le sac à dos )
      */
-    public ISolution solve(Instance I) {
-        boolean[] chosenItems = new boolean[I.getNumberOfProducts()];
+    public ISolution solve(Instance instance) {
+        boolean[] chosenItems = new boolean[instance.getNumberOfProducts()];
 
         int knapSackWeight = 0;
         int chosenItem;
 
-        for (int i = 0 ; i < I.getNumberOfProducts(); i++) {
+        for (int i = 0 ; i < instance.getNumberOfProducts(); i++) {
 
-            chosenItem = I.getWeights(i); // We choose the heaviest item
+            chosenItem = instance.getWeights(i); // We choose the heaviest item
 
-            if (chosenItem + knapSackWeight <= I.getCapacity()) { // If the item fits the backpack
+            if (chosenItem + knapSackWeight <= instance.getCapacity()) { // If the item fits the backpack
                 // Put it in the backpack
                 chosenItems[i] = true; // Add the chosen item to the list of chosen items
                 knapSackWeight += chosenItem;
 
                 // If the backpack if full, we have our solution !
-                if (knapSackWeight == I.getCapacity()) return new SolutionMT(chosenItems);
+                if (knapSackWeight == instance.getCapacity()) return new SolutionMT(chosenItems, instance);
             }
         }
 
@@ -59,5 +59,11 @@ public class SolverH extends Common implements ISolver {
     @Override
     public Optional<ISolution> isFeasible(Instance instance, ISolution solution) {
         return Optional.ofNullable(solve(super.getRemainingItems(instance, solution)));
+    }
+
+    @Override
+    public String toString()
+    {
+        return "SolverH";
     }
 }

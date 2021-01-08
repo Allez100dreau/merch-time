@@ -6,6 +6,7 @@ import unice.instance.InstanceMT;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -15,6 +16,7 @@ public class FileParser {
 
     int capacity;
     int nbProducts;
+    String fileName;
     List<Integer> weights;
     private static final Logger log = LoggerFactory.getLogger(FileParser.class);
 
@@ -32,6 +34,7 @@ public class FileParser {
             BufferedReader br = new BufferedReader(isr);
             String line = br.readLine();
 
+            fileName = file.substring(0,file.length()-4);
 
             capacity = Integer.parseInt(line);
             line = br.readLine();
@@ -62,8 +65,8 @@ public class FileParser {
 
     }
 
-    public void parseAllFiles() {
-
+    public static Iterator<FileParser> parseAllFiles() {
+        ArrayList<FileParser> parsers = new ArrayList<>();
         InputStream is = FileParser.class.getClassLoader().getResourceAsStream("input");
         if (is == null) try {
             throw new IOException();
@@ -79,13 +82,14 @@ public class FileParser {
                 files.add(br.readLine());
             }
             for (String fileName : files) {
-                parseFile(fileName);
+                FileParser parser = new FileParser();
+                parser.parseFile(fileName);
+                parsers.add(parser);
+
             }
         } catch (IOException e) {
-
         }
-
-
+        return parsers.iterator();
     }
 
     public int getCapacity() {
@@ -99,4 +103,9 @@ public class FileParser {
     public List<Integer> getWeights() {
         return new ArrayList<>(weights);
     }
+
+    public String getFileName() {
+        return fileName;
+    }
+
 }

@@ -12,7 +12,7 @@ public class TestSolverE {
 
     SolverE solverE;
 
-    /*
+
     @Test
     public void getSolutionTest()
     {
@@ -26,9 +26,14 @@ public class TestSolverE {
         Collections.sort(weight);
         Collections.reverse(weight);
         int capacity = 10;
-        List<boolean[]> newSolution = solverE.getSolution(new ArrayList<>(), solverE.getEmpty(weight.size()),0,weight,capacity,0,true, new ArrayList<>());
+        List<boolean[]> solutions = new ArrayList<>();
+        solverE.setLocalWeight(w);
+
+        solverE.getSolution(solutions, solverE.getEmpty(weight.size()),0,weight,capacity,0,true, new ArrayList<>());
+        assertEquals(solutions.size(),14);
+
         boolean contain = false;
-        for (boolean[] smt : newSolution) {
+        for (boolean[] smt : solutions) {
 
             if (Arrays.toString(smt).equals(Arrays.toString(s)))
             {
@@ -46,13 +51,14 @@ public class TestSolverE {
         List<Integer> weight2 = new ArrayList<>(w2);
         Collections.sort(weight2);
         Collections.reverse(weight2);
+        solverE.setLocalWeight(w2);
 
         boolean[] s2 = {true, false, true, false, false, false};
-        newSolution = solverE.getSolution(new ArrayList<>(), solverE.getEmpty(weight2.size()),0,weight2,21,0,true, new ArrayList<>());
-        assertEquals( 1,newSolution.size());
+        solutions = solverE.getSolution(new ArrayList<>(), solverE.getEmpty(weight2.size()),0,weight2,21,0,true, new ArrayList<>());
+        assertEquals( 2,solutions.size());
 
         contain = false ;
-        for (boolean[] smt : newSolution) {
+        for (boolean[] smt : solutions) {
 
             if (Arrays.toString(smt).equals(Arrays.toString(s2)))
             {
@@ -64,20 +70,29 @@ public class TestSolverE {
 
         //test 3
         solverE = new SolverE();
+        boolean[] s3 = { true, false, false, true}; // 6 + 14
 
         Integer[] weights3 = { 14, 10, 7,6};
         List<Integer> w3 = Arrays.asList(weights3);
         List<Integer> weight3 = new ArrayList<>(w3);
+        solverE.setLocalWeight(w3);
 
         capacity = 20;
 
-        newSolution = solverE.getSolution(new ArrayList<>(), solverE.getEmpty(weight3.size()),0,weight3,capacity,0,true, new ArrayList<>());
+        solutions = solverE.getSolution(new ArrayList<>(), solverE.getEmpty(weight3.size()),0,weight3,capacity,0,true, new ArrayList<>());
 
-        assertEquals( 0,newSolution.size()); //logiquement 1
-
+        assertEquals( 1,solutions.size()); //logiquement 1
+        contain = false ;
+        for (boolean[] smt : solutions) {
+            if (Arrays.toString(smt).equals(Arrays.toString(s3)))
+            {
+                contain = true;
+            }
+        }
+        assertTrue(contain);
 
     }
-    */
+
 
     @Test
     public void getIteratorTest() {
@@ -115,7 +130,6 @@ public class TestSolverE {
     }
 
 
-/*
     @Test
     public void isFeasibleTest()
     {
@@ -132,7 +146,7 @@ public class TestSolverE {
         Instance instance = new InstanceMT(21,6,weights);
         ISolution solution = new SolutionMT(sol);
 
-        assertTrue(solverE.isFeasible(instance,solution));
+        assertTrue(solverE.isFeasible(instance,solution).isPresent());
 
         //2eme test
         //prix disponnibles
@@ -142,9 +156,8 @@ public class TestSolverE {
         boolean[] s1 = {false,true,true,true,true,true,false,false,false,true,false};
         instance = new InstanceMT(10,11,weights);
         solution = new SolutionMT(s1);
-        System.out.print(solverE.isFeasible(instance,solution));
 
-        assertFalse(solverE.isFeasible(instance,solution));
+        assertTrue(solverE.isFeasible(instance,solution).isPresent());
 
         //3eme test
         //on garde les meme prix mais on prend une nouvelle solution qui ne marche pas
@@ -153,7 +166,7 @@ public class TestSolverE {
         instance = new InstanceMT(10,11,weights);
         solution = new SolutionMT(s2);
 
-        assertTrue(solverE.isFeasible(instance,solution));
+        assertFalse(solverE.isFeasible(instance,solution).isPresent());
 
         //4eme test
         //prix disponnibles
@@ -164,7 +177,7 @@ public class TestSolverE {
         instance = new InstanceMT(20,4,weights2);
         solution = new SolutionMT(s4);
 
-        assertFalse(solverE.isFeasible(instance,solution));
+        assertFalse(solverE.isFeasible(instance,solution).isPresent());
     }
-*/
+
 }

@@ -1,5 +1,7 @@
 package unice.solution;
 
+import unice.instance.Instance;
+
 import java.util.List;
 
 /**
@@ -18,6 +20,8 @@ public interface ISolution {
     int countTrue();
 
     List<Integer>  getSolution(List<Integer> weigth);
+
+    Instance getInstance();
 
 
 }

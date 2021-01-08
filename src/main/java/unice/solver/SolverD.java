@@ -67,7 +67,7 @@ public class SolverD extends Common implements ISolver {
 
         if (capacity == 0) {
             /** log and return the solution */
-            SolutionMT solutionMT = new SolutionMT(itemsChosen);
+            SolutionMT solutionMT = new SolutionMT(itemsChosen,instance);
             log.debug("Items chosen : {}", solutionMT.getSolution(weights));
             return solutionMT;
         }
@@ -98,5 +98,11 @@ public class SolverD extends Common implements ISolver {
     public Optional<ISolution> isFeasible(Instance instance, ISolution solution) {
         /**return true if solution not null else return false*/
         return Optional.ofNullable(getSolution(super.getRemainingItems(instance, solution)));
+    }
+
+    @Override
+    public String toString()
+    {
+        return "SolverD";
     }
 }

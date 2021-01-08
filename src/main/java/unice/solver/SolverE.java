@@ -3,12 +3,13 @@ package unice.solver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import unice.instance.Instance;
+import unice.instance.InstanceMT;
 import unice.solution.ISolution;
 import unice.solution.SolutionMT;
 
 import java.util.*;
 
-public class SolverE implements ISolver {
+public class SolverE extends Common implements ISolver {
 
     private static final Logger log = LoggerFactory.getLogger(SolverE.class);
     private List<Integer> localWeight;
@@ -54,12 +55,12 @@ public class SolverE implements ISolver {
         boolean[] nouvelleCombinaisonBool = Arrays.copyOf(took,took.length);   // on crée une liste de la taille de la solution primaire "took"
         int nouvelleCombinaison = primerSolution + weight.get(0); // la somme des poids de la solution primaire + le nouvel élément
         nouvelleCombinaisonBool[indice]  =  true;   // on dis que l'on prend l'élément premier
-        weight.remove(0);                        // on supprime ce même élément de tout les items car on va traiter toutes les possibilités avec
+        weight.remove(0);                     // on supprime ce même élément de tout les items car on va traiter toutes les possibilités avec
         List<Integer> instanceSecondaire = new ArrayList<>(weight); // on crée une autre instance de la taille de l'instance de base -1 car on a supprimé le premier élément
         int saveIndice = indice;                    // on mémorise l'indice actuel pour relancer à l'indice suivant
         solve = solver(solutions,nouvelleCombinaisonBool, nouvelleCombinaison, capacity,combination); // on test si l'ajout du premier élément est une solution
         //////// AJOUT DU PREMIER ELEMENT SOLUTION ///////////
-        if (solve == 0) {               // 0 signifie que c'est une solution
+        if (solve == 0) {                           // 0 signifie que c'est une solution
             solutions.add(nouvelleCombinaisonBool); // si oui on l'ajoute aux solutions
             combination.add(convert(nouvelleCombinaisonBool));
         }
@@ -166,12 +167,10 @@ public class SolverE implements ISolver {
 
         getSolution(solutions,getEmpty(instance.getNumberOfProducts()), 0, weight, instance.getCapacity(), 0,true,new ArrayList<>());
 
-
-
         for (boolean[] solution : solutions) {
-            ISolution solutionS = new SolutionMT(solution);
+            ISolution solutionS = new SolutionMT(solution, instance);
             solve.add(solutionS);
-            log.info("Les solutions possible : {}", solutionS.getSolution(instance.getWeights()));
+            log.debug("Les solutions possibles : {}", solutionS.getSolution(instance.getWeights()));
         }
         return solve.iterator();
     }
@@ -183,24 +182,25 @@ public class SolverE implements ISolver {
      *
      * @param instance l'ensemble des données
      * @param solution la solution qu'on a choisi (produits pris)
-     * @return l'existence d'une autre solution avec le produit restant
+     * @return Une nouvelle solution avec le produit restant s'il en existe une
      */
     @Override
     public Optional<ISolution> isFeasible(Instance instance, ISolution solution) {
-        List<Integer> rest = convert(solution.getChosenItems());
-        //On ajoute tous les produits non pris dans la solution au "reste"
-
+        this.localWeight = instance.getWeights();
         List<boolean[]> solutions = new ArrayList<>();
+        InstanceMT newInstance = super.getRemainingItems(instance, solution);
 
-        getSolution(solutions,getEmpty(instance.getNumberOfProducts()),0,rest,instance.getCapacity(),0,true,new ArrayList<>());
+        getSolution(solutions,getEmpty(newInstance.getNumberOfProducts()),0,newInstance.getWeights(),newInstance.getCapacity(),0,true,new ArrayList<>());
 
-        ISolution firstSolution = new SolutionMT(solutions.get(0));
-
-        return Optional.of(firstSolution);
+        if(solutions.size() > 0) return Optional.ofNullable(new SolutionMT(solutions.get(0), newInstance));
+        return Optional.empty();
     }
 
-
-
+    /**
+     * Permet de generer un tableau de N "false"
+     * @param numberOfProducts N
+     * @return tableau de N "false"
+     */
     public boolean[] getEmpty(int numberOfProducts){
         boolean[] took = new boolean[numberOfProducts];
         for(int i = 0 ; i < numberOfProducts;i++){
@@ -209,6 +209,12 @@ public class SolverE implements ISolver {
         return took;
     }
 
+    /**
+     * Permet de convertir un tableau de boolean en list d'entier
+     * Si l'indice de l'entier dans les weight est "true" dans le tableau alors on l'ajoute à la liste
+     * @param tab tableau de boolean
+     * @return list d'entier correspondante
+     */
     private List<Integer> convert(boolean[] tab)
     {
         List<Integer> list = new ArrayList<>();
@@ -219,5 +225,15 @@ public class SolverE implements ISolver {
         }
         return list;
 
+    }
+
+    public void setLocalWeight(List<Integer> localWeight) {
+        this.localWeight = localWeight;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "SolverE";
     }
 }
