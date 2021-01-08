@@ -1,5 +1,6 @@
 package unice.instance;
 
+import unice.parser.ConfigParser;
 import unice.parser.FileParser;
 
 import java.util.*;
@@ -30,8 +31,7 @@ public class InstanceMT implements Instance {
 
         if(isParsing)
         {
-            parser.parseFile("input21.txt");
-           // parser.parseAllFiles();
+            parser.parseFile(ConfigParser.getInputFile());
             capacity = parser.getCapacity();
             numberOfProducts = parser.getNumberOfProducts();
             weights = parser.getWeights();
