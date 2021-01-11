@@ -2,9 +2,7 @@ package unice.instance;
 
 import unice.parser.ConfigParser;
 import unice.parser.FileParser;
-
 import java.util.*;
-
 
 /**
  * Cette classe représente toute les données introduites:
@@ -28,7 +26,6 @@ public class InstanceMT implements Instance {
          *  a voir si par la suite on utilise directement parseAllFiles et on renvoie directement tous les output sous la forme d'un tableau d'instance
          *
           */
-
         if(isParsing)
         {
             parser.parseFile(ConfigParser.getInputFile());
@@ -49,8 +46,6 @@ public class InstanceMT implements Instance {
         Collections.sort(weights);
         Collections.reverse(weights);
     }
-
-
 
     public InstanceMT(int capacity, int numberOfProducts, List<Integer>  weights) {
         this.numberOfProducts = numberOfProducts;
@@ -79,6 +74,5 @@ public class InstanceMT implements Instance {
     @Override
     public List<Integer> getWeights(){
         return weights;
-
     }
 }

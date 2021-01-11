@@ -13,7 +13,7 @@ public class GeneratingTestCase {
     private static final int LOWERBOUND = 1;
     private static  final int UPPERBOUND = 14;
 
-    //Generating a random integer whith a Gaussian law, between the bound below
+    //Generating a random integer with a Gaussian law, between the bound below
     private static int generateNextGaussian(){
         Random rand = new Random();
         double price;
@@ -23,7 +23,7 @@ public class GeneratingTestCase {
         return (int)Math.round(price);
     }
 
-    //Generate an array for the price of all the gooides available
+    //Generate an array for the price of all the goodies available
     private static int[] generatingPrice(int nbGoodies){
         int[] listPrice =new int[nbGoodies];
         int i=0;
@@ -35,7 +35,7 @@ public class GeneratingTestCase {
         return (listPrice);
     }
 
-    //Generate a large amont of test case price whit particular one : only fill by number in range LOWERBOUDN to UPPERBOUND
+    //Generate a large amount of test case price whit particular one : only fill by number in range LOWERBOUDN to UPPERBOUND
     private static int[][] largeGeneratingPrice(int nbGoodies, int nbTest){
         int[][] res = new int[nbTest][nbGoodies];
         int j=LOWERBOUND;
@@ -61,7 +61,7 @@ public class GeneratingTestCase {
         return formatOfTestCase(capacity,nbGoodies,listPrice);
     }
 
-    //usefull if we need a large generation but need ajustment of the main method
+    //useful if we need a large generation but need adjustment of the main method
     private static ArrayList<ArrayList<int[]>> largeGenerationOfTestCases(int nbOfTest,int[] cap,int[] nbOfGoodies){
         ArrayList<ArrayList<int[]>> largeTestCase = new ArrayList<>(nbOfTest);
         int[][] listOfPrice = largeGeneratingPrice(nbOfGoodies[0],nbOfTest);
@@ -73,16 +73,16 @@ public class GeneratingTestCase {
 
     public static void main(String[] arg){
 
-        //Three importante data need to be call in arguments :
+        //Three important data need to be call in arguments :
         // first the number of test case wanted,
         // in second the knapsack capacity,
-        // in third the maximum number of goodies sellabble
+        // in third the maximum number of goodies salable
         int nbOfTestCase =Integer.parseInt(arg[0]);
         int[] capacity = new int[]{Integer.parseInt(arg[1])};
         int[] nbGoodies = new int[]{Integer.parseInt(arg[2])};
 
 
-        //usefull if need
+        //useful if need
         //largeGenerationOfTestCases(nbOfTestCase,capacity ,nbGoodies);
 
 

@@ -74,7 +74,7 @@ public class ConfigParser {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return "input"+prop.getProperty("Instance")+".txt";
+        return "input/input"+prop.getProperty("Instance")+".txt";
     }
 
     }

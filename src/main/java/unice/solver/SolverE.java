@@ -24,8 +24,6 @@ public class SolverE extends Common implements ISolver {
      * @param indice l'indice dans took qui correspond au premier objet de l'instance weight
      * @return la liste de toutes les solutions trouvée (List<boolean[]>)
      */
-
-
     public List<boolean[]> getSolution(List<boolean[]> solutions, boolean[] took, int primerSolution, List<Integer> weight, int capacity, int indice,boolean restart,List<List<Integer>> combination) {
         ////////// SI INSTANCE VIDE ////////////
         if (weight.isEmpty()) {                     // si il n'y a plus d'items
@@ -96,7 +94,6 @@ public class SolverE extends Common implements ISolver {
                         saveIndice++;
                     }
                     continue;                   // on skip aussi
-
                 }
                 /////// ON CHERCHE PLUS LOIN //////
                 List<Integer> newInstance = new ArrayList<>(instanceSecondaire);
@@ -119,7 +116,6 @@ public class SolverE extends Common implements ISolver {
         return getSolution(solutions, took, 0, weight, capacity, indice + 1,true,combination); // on recommence à partir de l'indice suivant car toutes les combinaisons possible avec le premier élément de l'instance on été testé
     }
 
-
     /**
      * Détermine l'état de la solution entrée en paramètre
      * @param solutions les solutions déjà listées
@@ -131,7 +127,6 @@ public class SolverE extends Common implements ISolver {
      * 1 : capacité dépassée ou solution déjà listée
      * 2 : capacité non atteinte
      */
-
     private int solver(List<boolean[]> solutions, boolean[] combination, int total, int capacity, List<List<Integer>> combinationS) {
         ////// CAPACITE NON ATTEINTE /////
         if (capacity > total) {
@@ -152,7 +147,6 @@ public class SolverE extends Common implements ISolver {
         ////// CAPACITE DEPASSEE OU SOLUTION DEJA LISTEE/////
         return 1;
     }
-
 
     /**
      * @param instance les données saisis
@@ -224,7 +218,6 @@ public class SolverE extends Common implements ISolver {
             }
         }
         return list;
-
     }
 
     public void setLocalWeight(List<Integer> localWeight) {

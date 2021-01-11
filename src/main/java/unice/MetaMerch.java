@@ -100,9 +100,27 @@ public class MetaMerch {
 
             pw.write(solverE.toString()+" - "+solverH.toString()+",");
             pw.write(solverE.toString()+" - "+solverD.toString()+"\n");
+            int i = 0;
 
 
             while (inputs.hasNext()) {
+                if (i == 32)  {
+                    pw.write("\nScore (/"+scoreSolverE+"):,");
+                    pw.write(scoreSolverE+",");
+                    pw.write(scoreSolverH+",");
+                    pw.write(scoreSolverD+",");
+                    pw.write(scoreSolverHD+",");
+                    pw.write(scoreSolverDH+",");
+                    pw.write(scoreSolverEH+",");
+                    pw.write(scoreSolverED+"\n\n");
+                    scoreSolverH = 0;
+                    scoreSolverE = 0;
+                    scoreSolverD = 0;
+                    scoreSolverHD = 0;
+                    scoreSolverDH = 0;
+                    scoreSolverEH = 0;
+                    scoreSolverED = 0;
+                }
                 FileParser parser = inputs.next();
                 Instance instance = new InstanceMT(parser.getCapacity(), parser.getNumberOfProducts(), parser.getWeights());
                 pw.write(parser.getFileName()+",");
@@ -134,6 +152,7 @@ public class MetaMerch {
                 String resultSolverED = getOneResult(instance, solverE, solverD);
                 pw.write(resultSolverED+"\n");
                 if (resultSolverE.equals(resultSolverED)) scoreSolverED++;
+                i++;
 
             }
 

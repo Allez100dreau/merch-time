@@ -11,7 +11,6 @@ import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-
 public class FileParser {
 
     int capacity;
@@ -23,7 +22,7 @@ public class FileParser {
     public void parseFile(String file) {
 
         try {
-            InputStream is = FileParser.class.getClassLoader().getResourceAsStream("input/" + file);
+            InputStream is = FileParser.class.getClassLoader().getResourceAsStream(file);
             if (is == null) try {
                 throw new IOException();
             } catch (IOException e) {
@@ -34,7 +33,7 @@ public class FileParser {
             BufferedReader br = new BufferedReader(isr);
             String line = br.readLine();
 
-            fileName = file.substring(0,file.length()-4);
+            fileName = file;
 
             capacity = Integer.parseInt(line);
             line = br.readLine();
@@ -44,7 +43,6 @@ public class FileParser {
             String s[] = br.readLine().split(" ");
             for (String str : s)
                 weights.add(Integer.parseInt(str));
-
 
             br.close();
 
@@ -61,29 +59,40 @@ public class FileParser {
     public InstanceMT parsedFileToInstance(String fileName) {
         parseFile(fileName);
         return new InstanceMT(capacity, nbProducts, weights);
-
-
     }
 
     public static Iterator<FileParser> parseAllFiles() {
         ArrayList<FileParser> parsers = new ArrayList<>();
-        InputStream is = FileParser.class.getClassLoader().getResourceAsStream("input");
-        if (is == null) try {
+        InputStream is1 = FileParser.class.getClassLoader().getResourceAsStream("input");
+        InputStream is2 = FileParser.class.getClassLoader().getResourceAsStream("codingBattleInput");
+
+        if (is1 == null || is2 == null) try {
             throw new IOException();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        InputStreamReader isr = new InputStreamReader(is, UTF_8);
-        BufferedReader br = new BufferedReader(isr);
+        InputStreamReader isr1 = new InputStreamReader(is1, UTF_8);
+        InputStreamReader isr2 = new InputStreamReader(is2, UTF_8);
+        BufferedReader br1 = new BufferedReader(isr1);
+        BufferedReader br2 = new BufferedReader(isr2);
 
         ArrayList<String> files = new ArrayList<>();
         try {
-            while (br.ready()) {
-                files.add(br.readLine());
+            while (br1.ready()) {
+                files.add(br1.readLine());
             }
             for (String fileName : files) {
                 FileParser parser = new FileParser();
-                parser.parseFile(fileName);
+                parser.parseFile("input/" +fileName);
+                parsers.add(parser);
+            }
+            files = new ArrayList<>();
+            while (br2.ready()) {
+                files.add(br2.readLine());
+            }
+            for (String fileName : files) {
+                FileParser parser = new FileParser();
+                parser.parseFile("codingBattleInput/" +fileName);
                 parsers.add(parser);
 
             }
