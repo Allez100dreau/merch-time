@@ -104,7 +104,7 @@ public class MetaMerch {
 
 
             while (inputs.hasNext()) {
-                if (i == 32)  {
+                if (i == 44)  {
                     pw.write("\nScore (/"+scoreSolverE+"):,");
                     pw.write(scoreSolverE+",");
                     pw.write(scoreSolverH+",");
@@ -189,7 +189,7 @@ public class MetaMerch {
     public static void main(String[] args) throws Exception {
 
         generateOneResult();
-        generatingComparisonChart();
+        //generatingComparisonChart();
 
         //to separate each test in log file
         log.debug("\n\n");
