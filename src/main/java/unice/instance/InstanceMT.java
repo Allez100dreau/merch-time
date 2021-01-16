@@ -17,7 +17,6 @@ public class InstanceMT implements Instance {
     private final int numberOfProducts;
     private final int capacity;
     private final List<Integer>  weights;
-    private FileParser parser = new FileParser();
 
     public InstanceMT() {
 

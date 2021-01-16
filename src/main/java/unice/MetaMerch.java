@@ -24,7 +24,7 @@ import static unice.parser.FileParser.parseAllFiles;
 public class MetaMerch {
 
     private static final Logger log = LoggerFactory.getLogger(MetaMerch.class);
-    private static FileParser parser = new FileParser();
+    private static final FileParser parser = new FileParser();
     private static Instance parseInstance() {
 
         /**
@@ -34,7 +34,7 @@ public class MetaMerch {
          */
         if(ConfigParser.getInputFile() == null || !parser.parseFile(ConfigParser.getInputFile()))
         {
-            System.out.println("Fichier non valide, Lecture standard : ");
+            log.info("Fichier non valide, Lecture standard : ");
             return new InstanceMT();
         }
         else return parser.parsedFileToInstance();
