@@ -24,10 +24,20 @@ import static unice.parser.FileParser.parseAllFiles;
 public class MetaMerch {
 
     private static final Logger log = LoggerFactory.getLogger(MetaMerch.class);
-
+    private static FileParser parser = new FileParser();
     private static Instance parseInstance() {
-        //true pour lecture de fichier false pour user input
-        return new InstanceMT(true);
+
+        /**
+         * Si la property est vide ou le nom ne correspond pas à un fichier, alors on lit stdin.
+         * Sinon, on lit le fichier
+         * =)
+         */
+        if(ConfigParser.getInputFile() == null || !parser.parseFile(ConfigParser.getInputFile()))
+        {
+            System.out.println("Fichier non valide, Lecture standard : ");
+            return new InstanceMT();
+        }
+        else return parser.parsedFileToInstance();
     }
 
     /**

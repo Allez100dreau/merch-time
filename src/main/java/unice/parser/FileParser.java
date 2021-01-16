@@ -19,15 +19,11 @@ public class FileParser {
     List<Integer> weights;
     private static final Logger log = LoggerFactory.getLogger(FileParser.class);
 
-    public void parseFile(String file) {
+    public boolean parseFile(String file) {
 
         try {
             InputStream is = FileParser.class.getClassLoader().getResourceAsStream(file);
-            if (is == null) try {
-                throw new IOException();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            if (is == null) return false;
 
             InputStreamReader isr = new InputStreamReader(is, UTF_8);
             BufferedReader br = new BufferedReader(isr);
@@ -54,10 +50,11 @@ public class FileParser {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        return true;
     }
 
-    public InstanceMT parsedFileToInstance(String fileName) {
-        parseFile(fileName);
+    public InstanceMT parsedFileToInstance() {
         return new InstanceMT(capacity, nbProducts, weights);
     }
 

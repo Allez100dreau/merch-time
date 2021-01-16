@@ -66,11 +66,12 @@ public class ConfigParser {
     public static String getInputFile()  {
 
         try {
-            prop.load(inputStream);
             if (inputStream == null) {
                 log.error("Property file '{}' not found in the classpath",propertyFile);
-                throw new FileNotFoundException("Property file '" + propertyFile + "' not found in the classpath");
+                return null;
             }
+            else
+                prop.load(inputStream);
         } catch (IOException e) {
             e.printStackTrace();
         }

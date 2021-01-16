@@ -19,29 +19,14 @@ public class InstanceMT implements Instance {
     private final List<Integer>  weights;
     private FileParser parser = new FileParser();
 
-    public InstanceMT(boolean isParsing) {
+    public InstanceMT() {
 
-        /**
-         *  Soit on choisit de lire avec un fichier, soit directement avec l'input utilisateur
-         *  a voir si par la suite on utilise directement parseAllFiles et on renvoie directement tous les output sous la forme d'un tableau d'instance
-         *
-          */
-        if(isParsing)
-        {
-            parser.parseFile(ConfigParser.getInputFile());
-            capacity = parser.getCapacity();
-            numberOfProducts = parser.getNumberOfProducts();
-            weights = parser.getWeights();
-        }
-        else {
-            weights = new ArrayList<>();
-            capacity = scanner.nextInt();
-            numberOfProducts = scanner.nextInt();
+        weights = new ArrayList<>();
+        capacity = scanner.nextInt();
+        numberOfProducts = scanner.nextInt();
 
-            for (int i = 0; i < numberOfProducts; i++) {
-                weights.add(scanner.nextInt());
-            }
-        }
+        for (int i = 0; i < numberOfProducts; i++)
+            weights.add(scanner.nextInt());
 
         Collections.sort(weights);
         Collections.reverse(weights);
