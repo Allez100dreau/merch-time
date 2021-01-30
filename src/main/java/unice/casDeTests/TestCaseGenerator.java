@@ -57,10 +57,8 @@ class MerchSolver {
 	public String toString() {
 		return me.getClass().getSimpleName() + "-" + bob.getClass().getSimpleName();
 	}
-
-	
-	
 }
+
 
 public class TestCaseGenerator {
 
@@ -92,7 +90,11 @@ public class TestCaseGenerator {
 		candidates = createCandidates();
 		
 	}
-
+	
+	public int getNbCandidates() {
+		return candidates.length;
+	}
+	
 	private static MerchSolver[] createCandidates() {
 		return new MerchSolver[]{
 				new MerchSolver(new SolverE(), new SolverD()),
@@ -131,29 +133,79 @@ public class TestCaseGenerator {
 		for (MerchSolver cand: candidates) System.out.print(cand +  " ");
 		System.out.println();
 	}
-		
-	public void generateAndTest() {
-		// Generate and print the instance
-		Instance instance = generateInstance();
+	
+	private void printInstance(Instance instance) {
 		System.out.print("c "+instance.getCapacity() + "\nv ");
 		instance.getWeights().forEach(n -> System.out.print(n + " "));
 		System.out.println();
-		
-		// Evaluate the instance and print the answers	
-		boolean[] answers = evaluateInstance(instance);
+	}
+	
+	private void printAnswers(boolean[] answers) {
 		System.out.print("s ");
 		for (boolean ans : answers) System.out.print((ans ? 1 : 0) + " ");
 		System.out.println('\n');
 	}
 	
-	public static void main(String[] arg){
-		// TODO The candidates are pretty slow, use less than 30 items
-        final TestCaseGenerator test = new TestCaseGenerator(10, 20, 1, 14, 10, 50, 0);
-        final int n = 10;
-        test.printCandidates();
-        for (int i = 0; i < n; i++) {
-        	test.generateAndTest();
+	private static int[] getScores(boolean[] answers) {
+		int[] scores = new int[answers.length];
+		for (int i = 0; i < scores.length; i++) {
+			scores[i] = answers[i] == answers[0] ? 1 : 0;
 		}
+		return scores;
+	}
+	
+	private static boolean keepTestcase(int[] scores) {
+		int total = 0;
+		for (int i : scores) total += i;
+		return total < scores.length;
+	}
+	
+	public void printScores(int[] scores) {
+		for (int i = 0; i < scores.length; i++) {
+			System.out.println(candidates[i] + ": " + scores[i]);
+		}
+	}
+	
+	
+	public Optional<int[]> generateAndTest() {
+		// Generate and evaluate the instance
+		Instance instance = generateInstance();
+		boolean[] answers = evaluateInstance(instance);
+		int[] scores = getScores(answers);
+		
+		// Keep the instance if at least one solver fails to give the right answer
+		if(keepTestcase(scores)) {
+			printInstance(instance);
+			printAnswers(answers);
+			return Optional.of(scores);
+		} else return Optional.empty();	
+	}	
+	
+	
+	public static void main(String[] arg){
+		final long seed = 3; 
+		// TODO The candidates are pretty slow, use less than 30 items
+        final TestCaseGenerator test = new TestCaseGenerator(10, 20, 1, 14, 10, 50, seed);
+        
+        // We generate 30 test cases
+        int n = 30;
+        test.printCandidates();
+        // the total score of each candidate
+        int[] total = new int[test.getNbCandidates()];
+        while(n > 0) {
+        	Optional<int[]> scores = test.generateAndTest();
+        	if(scores.isPresent()) {
+        		// The test case is selected
+        		n--;
+        		// Update the total scores
+        		for (int i = 0; i < total.length; i++) {
+					total[i] += scores.get()[i];
+				}
+        	}
+		}
+        // Print the final scores
+        test.printScores(total);
+        
         		
         
     }
