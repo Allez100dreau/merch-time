@@ -73,6 +73,7 @@ public class MetaMerch {
             else {
                 ISolution bobSolutionPresent = bobSolution.get();
                 if (!solutionChecker.checkValidity(instance, bobSolutionPresent)) {
+                	//FIXME It is also an error !
                     answer = "POSSIBLE";
                 }
             }

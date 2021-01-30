@@ -4,6 +4,7 @@ package unice.solution;
 import unice.instance.Instance;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class SolutionMT implements ISolution {
@@ -60,4 +61,11 @@ public class SolutionMT implements ISolution {
         return solution;
 
     }
+
+	@Override
+	public String toString() {
+		return "SolutionMT [chosenItems=" + Arrays.toString(chosenItems) + "]";
+	}
+    
+    
 }

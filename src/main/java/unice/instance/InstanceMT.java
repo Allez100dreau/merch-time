@@ -1,8 +1,9 @@
 package unice.instance;
 
-import unice.parser.ConfigParser;
-import unice.parser.FileParser;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Scanner;
 
 /**
  * Cette classe représente toute les données introduites:
@@ -32,6 +33,7 @@ public class InstanceMT implements Instance {
     }
 
     public InstanceMT(int capacity, int numberOfProducts, List<Integer>  weights) {
+    	// FIXME Why is the number of products needed ? 
         this.numberOfProducts = numberOfProducts;
         this.capacity = capacity;
         this.weights = weights;
@@ -59,4 +61,12 @@ public class InstanceMT implements Instance {
     public List<Integer> getWeights(){
         return weights;
     }
+
+	@Override
+	public String toString() {
+		return "InstanceMT [capacity=" + capacity + ", weights=" + weights + "]";
+	}
+
+    
+    
 }
