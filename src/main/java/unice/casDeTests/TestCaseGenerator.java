@@ -162,7 +162,7 @@ public class TestCaseGenerator {
 	
 	public void printScores(int[] scores) {
 		for (int i = 0; i < scores.length; i++) {
-			System.out.println(candidates[i] + ": " + scores[i]);
+			System.out.println("| " + candidates[i] + "| " + + scores[i] + "|");
 		}
 	}
 	
